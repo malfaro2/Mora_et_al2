@@ -6,7 +6,7 @@ output:
   md_document:
     variant: markdown_github
     toc: true
-    toc_depth: 2
+    toc_depth: 3
 ---
 
 ```{r setup, include=FALSE}
@@ -140,10 +140,42 @@ exp(summary(test)$coefficients)
 
 According to the aforementioned model, being a field adult is a significant factor for increasing the odds of detecting versus attacking (pvalue = 0.0108), and for avoiding versus attacking (pvalue = 0.0189). This shows that field adults are more likely to detect or avoid than to attack, compared to adults reared in captivity which appear to prefer attacking. Similarly, not using silk is associated with an increased chance of detecting versus attacking (pvalue = 0.0160), which makes sense since these spiders use silk only when attacking. Being a field-caught juvenile versus an adult reared in captivity did not make a difference in the most common spider actions. Other factors such as wasp color, wasp size, spider size, and wasp genus did not make a statistically significant difference when included in the full model. It should however be noted that field-caught adults only attacked black wasps, and adults reared in captivity avoided only BOB wasps.
 
-### Timelines
+### Timelines (original version)
 
 ```{r}
-options <- sort(unique(datos$h_resp3));options
+options <- sort(unique(datos$h_resp3))
+dat<-datos[datos$h_resp3=="Detect",] %>%
+  mutate(s_type=recode_factor(s_type,
+                              "Wild Juvenile"="Field-Juvenile",
+                              "Wild Adult"="Field-Adult",
+                              "Adult Captivity"="Captivity-Adult")) 
+
+ggplot(data = dat) +
+  geom_mosaic(data=dat,aes(x = product(w_color, time2), 
+                           fill=w_color, 
+                           conds=product(s_type)), 
+              na.rm=TRUE, divider=mosaic("v")) + 
+  scale_fill_manual(values=c("#999999", "#E69F00")) +
+  labs(x = "Time", title='', y="")+
+  theme(legend.position = "none") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+dat<-datos[datos$h_resp3=="Attack",] %>%
+  mutate(s_type=recode_factor(s_type,
+                              "Wild Juvenile"="Field-Juvenile",
+                              "Wild Adult"="Field-Adult",
+                              "Adult Captivity"="Captivity-Adult")) 
+
+ggplot(data = dat) +
+  geom_mosaic(data=dat,aes(x = product(w_color, time2), 
+                           fill=w_color, 
+                           conds=product(s_type)), 
+              na.rm=TRUE, divider=mosaic("v")) + 
+  scale_fill_manual(values=c("#999999", "#E69F00")) +
+  labs(x = "Time", title='', y="")+
+  theme(legend.position = "none") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
 dat<-datos[datos$h_resp3=="Avoid",] %>%
   mutate(s_type=recode_factor(s_type,
                               "Wild Juvenile"="Field-Juvenile",
@@ -155,6 +187,56 @@ ggplot(data = dat) +
                            fill=w_color, 
                            conds=product(s_type)), 
               na.rm=TRUE, divider=mosaic("v")) + 
+  scale_fill_manual(values=c("#999999", "#E69F00")) +
+  labs(x = "Time", title='', y="")+
+  theme(legend.position = "none") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+### Timelines (bar plots option)
+
+```{r}
+options <- sort(unique(datos$h_resp3))
+dat<-datos[datos$h_resp3=="Detect",] %>%
+  mutate(s_type=recode_factor(s_type,
+                              "Wild Juvenile"="Field-Juvenile",
+                              "Wild Adult"="Field-Adult",
+                              "Adult Captivity"="Captivity-Adult")) %>% 
+  group_by(s_type, w_color, time2) %>% summarise(n=n())
+
+  ggplot(data=dat, aes(x=time2, y=n, fill=w_color)) +
+  geom_bar(stat="identity") + 
+  facet_wrap(~s_type, ncol=5)+
+  scale_fill_manual(values=c("#999999", "#E69F00")) +
+  labs(x = "Time", title='', y="")+
+  theme(legend.position = "none") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+dat<-datos[datos$h_resp3=="Attack",] %>%
+  mutate(s_type=recode_factor(s_type,
+                              "Wild Juvenile"="Field-Juvenile",
+                              "Wild Adult"="Field-Adult",
+                              "Adult Captivity"="Captivity-Adult")) %>% 
+  group_by(s_type, w_color, time2) %>% summarise(n=n())
+
+  ggplot(data=dat, aes(x=time2, y=n, fill=w_color)) +
+  geom_bar(stat="identity") + 
+  facet_wrap(~s_type, ncol=5)+
+  scale_fill_manual(values=c("#999999", "#E69F00")) +
+  labs(x = "Time", title='', y="")+
+  theme(legend.position = "none") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  
+dat<-datos[datos$h_resp3=="Avoid",] %>%
+  mutate(s_type=recode_factor(s_type,
+                              "Wild Juvenile"="Field-Juvenile",
+                              "Wild Adult"="Field-Adult",
+                              "Adult Captivity"="Captivity-Adult")) %>% 
+  group_by(s_type, w_color, time2) %>% summarise(n=n())
+
+  ggplot(data=dat, aes(x=time2, y=n, fill=w_color)) +
+  geom_bar(stat="identity") + 
+  facet_wrap(~s_type, ncol=5)+
   scale_fill_manual(values=c("#999999", "#E69F00")) +
   labs(x = "Time", title='', y="")+
   theme(legend.position = "none") +

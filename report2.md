@@ -2,6 +2,13 @@
     prey](#experiments-of-spiders-with-live-prey)
     -   [Methods](#methods)
     -   [Results](#results)
+        -   [Association between sizes (not
+            included):](#association-between-sizes-not-included)
+        -   [Multinomial Model](#multinomial-model)
+        -   [Timelines (original version)](#timelines-original-version)
+        -   [Timelines (bar plots option)](#timelines-bar-plots-option)
+        -   [Re-coding of BOB for Table
+            1](#re-coding-of-bob-for-table-1)
 -   [Experiment of spiders with false prey in automated
     cage](#experiment-of-spiders-with-false-prey-in-automated-cage)
     -   [Methods](#methods-1)
@@ -269,14 +276,48 @@ statistically significant difference when included in the full model. It
 should however be noted that field-caught adults only attacked black
 wasps, and adults reared in captivity avoided only BOB wasps.
 
-### Timelines
+### Timelines (original version)
 
 ``` r
-options <- sort(unique(datos$h_resp3));options
+options <- sort(unique(datos$h_resp3))
+dat<-datos[datos$h_resp3=="Detect",] %>%
+  mutate(s_type=recode_factor(s_type,
+                              "Wild Juvenile"="Field-Juvenile",
+                              "Wild Adult"="Field-Adult",
+                              "Adult Captivity"="Captivity-Adult")) 
+
+ggplot(data = dat) +
+  geom_mosaic(data=dat,aes(x = product(w_color, time2), 
+                           fill=w_color, 
+                           conds=product(s_type)), 
+              na.rm=TRUE, divider=mosaic("v")) + 
+  scale_fill_manual(values=c("#999999", "#E69F00")) +
+  labs(x = "Time", title='', y="")+
+  theme(legend.position = "none") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
 
-    ## [1] Attack Detect Avoid 
-    ## Levels: Attack Detect Avoid
+![](report2_files/figure-markdown_github/unnamed-chunk-7-1.png)
+
+``` r
+dat<-datos[datos$h_resp3=="Attack",] %>%
+  mutate(s_type=recode_factor(s_type,
+                              "Wild Juvenile"="Field-Juvenile",
+                              "Wild Adult"="Field-Adult",
+                              "Adult Captivity"="Captivity-Adult")) 
+
+ggplot(data = dat) +
+  geom_mosaic(data=dat,aes(x = product(w_color, time2), 
+                           fill=w_color, 
+                           conds=product(s_type)), 
+              na.rm=TRUE, divider=mosaic("v")) + 
+  scale_fill_manual(values=c("#999999", "#E69F00")) +
+  labs(x = "Time", title='', y="")+
+  theme(legend.position = "none") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+![](report2_files/figure-markdown_github/unnamed-chunk-7-2.png)
 
 ``` r
 dat<-datos[datos$h_resp3=="Avoid",] %>%
@@ -296,7 +337,67 @@ ggplot(data = dat) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
 
-![](report2_files/figure-markdown_github/unnamed-chunk-7-1.png)
+![](report2_files/figure-markdown_github/unnamed-chunk-7-3.png)
+
+### Timelines (bar plots option)
+
+``` r
+options <- sort(unique(datos$h_resp3))
+dat<-datos[datos$h_resp3=="Detect",] %>%
+  mutate(s_type=recode_factor(s_type,
+                              "Wild Juvenile"="Field-Juvenile",
+                              "Wild Adult"="Field-Adult",
+                              "Adult Captivity"="Captivity-Adult")) %>% 
+  group_by(s_type, w_color, time2) %>% summarise(n=n())
+
+  ggplot(data=dat, aes(x=time2, y=n, fill=w_color)) +
+  geom_bar(stat="identity") + 
+  facet_wrap(~s_type, ncol=5)+
+  scale_fill_manual(values=c("#999999", "#E69F00")) +
+  labs(x = "Time", title='', y="")+
+  theme(legend.position = "none") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+![](report2_files/figure-markdown_github/unnamed-chunk-8-1.png)
+
+``` r
+dat<-datos[datos$h_resp3=="Attack",] %>%
+  mutate(s_type=recode_factor(s_type,
+                              "Wild Juvenile"="Field-Juvenile",
+                              "Wild Adult"="Field-Adult",
+                              "Adult Captivity"="Captivity-Adult")) %>% 
+  group_by(s_type, w_color, time2) %>% summarise(n=n())
+
+  ggplot(data=dat, aes(x=time2, y=n, fill=w_color)) +
+  geom_bar(stat="identity") + 
+  facet_wrap(~s_type, ncol=5)+
+  scale_fill_manual(values=c("#999999", "#E69F00")) +
+  labs(x = "Time", title='', y="")+
+  theme(legend.position = "none") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+![](report2_files/figure-markdown_github/unnamed-chunk-8-2.png)
+
+``` r
+dat<-datos[datos$h_resp3=="Avoid",] %>%
+  mutate(s_type=recode_factor(s_type,
+                              "Wild Juvenile"="Field-Juvenile",
+                              "Wild Adult"="Field-Adult",
+                              "Adult Captivity"="Captivity-Adult")) %>% 
+  group_by(s_type, w_color, time2) %>% summarise(n=n())
+
+  ggplot(data=dat, aes(x=time2, y=n, fill=w_color)) +
+  geom_bar(stat="identity") + 
+  facet_wrap(~s_type, ncol=5)+
+  scale_fill_manual(values=c("#999999", "#E69F00")) +
+  labs(x = "Time", title='', y="")+
+  theme(legend.position = "none") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+![](report2_files/figure-markdown_github/unnamed-chunk-8-3.png)
 
 ### Re-coding of BOB for Table 1
 
