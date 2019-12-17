@@ -12,7 +12,7 @@ Mora-Castro R, Hernández-Jiménez M, Alfaro-Córdoba M, Avendano E, Hanson-Snor
 
 * [Code to read the data](https://github.com/malfaro2/Mora_et_al2/blob/master/read_data.R)
 
-* [Code to analyze the data](https://github.com/malfaro2/Mora_et_al/blob/master/report.md)
+* [Code to analyze the data](https://github.com/malfaro2/Mora_et_al/blob/master/report2.md)
 
 
 ### Cite:
