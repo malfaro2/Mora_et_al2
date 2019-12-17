@@ -21,7 +21,7 @@ require(reshape2)
 library(gridExtra)
 library(extrafont)
 library(grDevices)
-theme_set(theme_bw(base_size=8, base_family='Arial'))
+theme_set(theme_bw(base_size=12, base_family='Arial'))
 ```
 
 # Experiments of spiders with live prey 
@@ -58,7 +58,7 @@ Original choice of plot:
 ```{r figure3}
 bp1 <- ggplot(resumen, aes(x=type, y=w_size)) + 
   geom_boxplot()+ facet_wrap(~w_color)+theme(legend.position = "none")+ # dejar la misma escala de spider size
-  labs(title="A",x="Genera", y = "Wasp Size (mm)") +
+  labs(title="A",x="Genera and Wasp Color", y = "Wasp Size (mm)") +
   ylim(c(min(resumen$w_size),max(resumen$s_size))) 
 
 bp2 <- ggplot(resumen, aes(x=s_type, y=s_size)) + 
@@ -70,10 +70,10 @@ grid.arrange(bp1, bp2, nrow = 1, widths=2:1)
 
 Mauricio's suggestion:
 
-```{r}
+```{r fig.width=6}
 bp1 <- ggplot(resumen, aes(x=w_color, y=w_size)) + 
   geom_boxplot()+ facet_wrap(~type, ncol=4)+theme(legend.position = "none")+ # dejar la misma escala de spider size
-  labs(title="A",x="Genera", y = "Wasp Size (mm)") +
+  labs(title="A",x="Wasp Color", y = "Wasp Size (mm)") +
   ylim(c(min(resumen$w_size),max(resumen$s_size))) 
 
 bp2 <- ggplot(resumen, aes(x=s_type, y=s_size)) + 
@@ -140,6 +140,20 @@ exp(summary(test)$coefficients)
 
 According to the aforementioned model, being a field adult is a significant factor for increasing the odds of detecting versus attacking (pvalue = 0.0108), and for avoiding versus attacking (pvalue = 0.0189). This shows that field adults are more likely to detect or avoid than to attack, compared to adults reared in captivity which appear to prefer attacking. Similarly, not using silk is associated with an increased chance of detecting versus attacking (pvalue = 0.0160), which makes sense since these spiders use silk only when attacking. Being a field-caught juvenile versus an adult reared in captivity did not make a difference in the most common spider actions. Other factors such as wasp color, wasp size, spider size, and wasp genus did not make a statistically significant difference when included in the full model. It should however be noted that field-caught adults only attacked black wasps, and adults reared in captivity avoided only BOB wasps.
 
+```{r}
+datos_model <- datos_model %>%
+  mutate(h_resp3=recode_factor(h_resp3, "Detect"="Detect",
+                                "Attack"="Attack",
+                                "Avoid"="Avoid"))
+ggplot(data = datos_model) +
+  geom_mosaic(aes(x = product(h_resp3, s_type), 
+                  fill=w_color), 
+              na.rm=TRUE, divider=mosaic("v")) +  
+  #theme(legend.position = "none") +
+  scale_fill_manual(values=c("#999999", "#E69F00")) +labs(x = "Action", title='', y="")
+```
+
+
 ### Timelines (original version)
 
 ```{r}
@@ -156,7 +170,7 @@ ggplot(data = dat) +
                            conds=product(s_type)), 
               na.rm=TRUE, divider=mosaic("v")) + 
   scale_fill_manual(values=c("#999999", "#E69F00")) +
-  labs(x = "Time", title='', y="")+
+  labs(x = "Time", title='A', y="")+
   theme(legend.position = "none") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
@@ -172,7 +186,7 @@ ggplot(data = dat) +
                            conds=product(s_type)), 
               na.rm=TRUE, divider=mosaic("v")) + 
   scale_fill_manual(values=c("#999999", "#E69F00")) +
-  labs(x = "Time", title='', y="")+
+  labs(x = "Time", title='B', y="")+
   theme(legend.position = "none") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
@@ -188,14 +202,14 @@ ggplot(data = dat) +
                            conds=product(s_type)), 
               na.rm=TRUE, divider=mosaic("v")) + 
   scale_fill_manual(values=c("#999999", "#E69F00")) +
-  labs(x = "Time", title='', y="")+
+  labs(x = "Time", title='C', y="")+
   theme(legend.position = "none") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
 
 ### Timelines (bar plots option)
 
-```{r}
+```{r fig.height=8, fig.width=5}
 options <- sort(unique(datos$h_resp3))
 dat<-datos[datos$h_resp3=="Detect",] %>%
   mutate(s_type=recode_factor(s_type,
@@ -204,12 +218,12 @@ dat<-datos[datos$h_resp3=="Detect",] %>%
                               "Adult Captivity"="Captivity-Adult")) %>% 
   group_by(s_type, w_color, time2) %>% summarise(n=n())
 
-  ggplot(data=dat, aes(x=time2, y=n, fill=w_color)) +
+t1<-   ggplot(data=dat, aes(x=time2, y=n, fill=w_color)) +
   geom_bar(stat="identity") + 
   facet_wrap(~s_type, ncol=5)+
   scale_fill_manual(values=c("#999999", "#E69F00")) +
-  labs(x = "Time", title='', y="")+
-  theme(legend.position = "none") +
+  labs(x = "Time", title='A', y="")+
+  #theme(legend.position = "none") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 dat<-datos[datos$h_resp3=="Attack",] %>%
@@ -219,12 +233,12 @@ dat<-datos[datos$h_resp3=="Attack",] %>%
                               "Adult Captivity"="Captivity-Adult")) %>% 
   group_by(s_type, w_color, time2) %>% summarise(n=n())
 
-  ggplot(data=dat, aes(x=time2, y=n, fill=w_color)) +
+t2<-  ggplot(data=dat, aes(x=time2, y=n, fill=w_color)) +
   geom_bar(stat="identity") + 
   facet_wrap(~s_type, ncol=5)+
   scale_fill_manual(values=c("#999999", "#E69F00")) +
-  labs(x = "Time", title='', y="")+
-  theme(legend.position = "none") +
+  labs(x = "Time", title='B', y="")+
+  #theme(legend.position = "none") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
   
 dat<-datos[datos$h_resp3=="Avoid",] %>%
@@ -234,13 +248,15 @@ dat<-datos[datos$h_resp3=="Avoid",] %>%
                               "Adult Captivity"="Captivity-Adult")) %>% 
   group_by(s_type, w_color, time2) %>% summarise(n=n())
 
-  ggplot(data=dat, aes(x=time2, y=n, fill=w_color)) +
+t3<-   ggplot(data=dat, aes(x=time2, y=n, fill=w_color)) +
   geom_bar(stat="identity") + 
   facet_wrap(~s_type, ncol=5)+
   scale_fill_manual(values=c("#999999", "#E69F00")) +
-  labs(x = "Time", title='', y="")+
-  theme(legend.position = "none") +
+  labs(x = "Time", title='C', y="")+
+ # theme(legend.position = "none") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  
+grid.arrange(t1, t2, t3, nrow = 3)
 ```
 
 
