@@ -12,7 +12,7 @@ Rebeca Mora-Castro, Marcela Alfaro-Córdoba, Marcela Hernández-Jiménez, Mauric
 
 * [Code to read the data](https://github.com/malfaro2/Mora_et_al2/blob/master/read_data.R)
 
-* [Code to analyze the data](https://github.com/malfaro2/Mora_et_al2/blob/master/report2.md)
+* [Code to analyze the data](https://malfaro2.github.io/Mora_et_al2/report2)
 
 
 ### Cite:
