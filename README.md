@@ -4,7 +4,7 @@
 
 This is the code for the paper :
 
-Mora-Castro R, Hernández-Jiménez M, Alfaro-Córdoba M, Avendano E, Hanson-Snortum P (2019) Unraveling the function of the black-orange-black (BOB) pattern in small parasitoid wasps (Hymenoptera: Platygastridae) through the eyes of jumping spiders (Aranae: Salticidae). To be submitted.
+Rebeca Mora-Castro, Marcela Alfaro-Córdoba, Marcela Hernández-Jiménez, Mauricio Fernández-Otárola, Michael Méndez-Rivera, Didier Ramírez-Morales, Carlos E. Rodríguez-Rodríguez, Andrés Durán-Rodríguez, Geovanna Rojas-Malavasi, Natalia Jiménez-Conejo, Paul Hanson-Snortum (2019). Unraveling the function of the black-orange-black (BOB) pattern in small parasitoid wasps (Hymenoptera: Platygastridae) through the eyes of jumping spiders (Aranae: Salticidae). To be submitted.
 
 ### Contents:
 
@@ -12,7 +12,7 @@ Mora-Castro R, Hernández-Jiménez M, Alfaro-Córdoba M, Avendano E, Hanson-Snor
 
 * [Code to read the data](https://github.com/malfaro2/Mora_et_al2/blob/master/read_data.R)
 
-* [Code to analyze the data](https://github.com/malfaro2/Mora_et_al/blob/master/report.md)
+* [Code to analyze the data](https://github.com/malfaro2/Mora_et_al2/blob/master/report2.md)
 
 
 ### Cite:
