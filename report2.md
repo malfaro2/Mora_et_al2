@@ -100,7 +100,7 @@ Original choice of plot:
 ``` r
 bp1 <- ggplot(resumen, aes(x=type, y=w_size)) + 
   geom_boxplot()+ facet_wrap(~w_color)+theme(legend.position = "none")+ # dejar la misma escala de spider size
-  labs(title="A",x="Genera", y = "Wasp Size (mm)") +
+  labs(title="A",x="Genera and Wasp Color", y = "Wasp Size (mm)") +
   ylim(c(min(resumen$w_size),max(resumen$s_size))) 
 
 bp2 <- ggplot(resumen, aes(x=s_type, y=s_size)) + 
@@ -117,7 +117,7 @@ Mauricio’s suggestion:
 ``` r
 bp1 <- ggplot(resumen, aes(x=w_color, y=w_size)) + 
   geom_boxplot()+ facet_wrap(~type, ncol=4)+theme(legend.position = "none")+ # dejar la misma escala de spider size
-  labs(title="A",x="Genera", y = "Wasp Size (mm)") +
+  labs(title="A",x="Wasp Color", y = "Wasp Size (mm)") +
   ylim(c(min(resumen$w_size),max(resumen$s_size))) 
 
 bp2 <- ggplot(resumen, aes(x=s_type, y=s_size)) + 
@@ -276,6 +276,21 @@ statistically significant difference when included in the full model. It
 should however be noted that field-caught adults only attacked black
 wasps, and adults reared in captivity avoided only BOB wasps.
 
+``` r
+datos_model <- datos_model %>%
+  mutate(h_resp3=recode_factor(h_resp3, "Detect"="Detect",
+                                "Attack"="Attack",
+                                "Avoid"="Avoid"))
+ggplot(data = datos_model) +
+  geom_mosaic(aes(x = product(h_resp3, s_type), 
+                  fill=w_color), 
+              na.rm=TRUE, divider=mosaic("v")) +  
+  #theme(legend.position = "none") +
+  scale_fill_manual(values=c("#999999", "#E69F00")) +labs(x = "Action", title='', y="")
+```
+
+![](report2_files/figure-markdown_github/unnamed-chunk-7-1.png)
+
 ### Timelines (original version)
 
 ``` r
@@ -286,58 +301,52 @@ dat<-datos[datos$h_resp3=="Detect",] %>%
                               "Wild Adult"="Field-Adult",
                               "Adult Captivity"="Captivity-Adult")) 
 
-ggplot(data = dat) +
+ta1<- ggplot(data = dat) +
   geom_mosaic(data=dat,aes(x = product(w_color, time2), 
                            fill=w_color, 
                            conds=product(s_type)), 
               na.rm=TRUE, divider=mosaic("v")) + 
   scale_fill_manual(values=c("#999999", "#E69F00")) +
-  labs(x = "Time", title='', y="")+
+  labs(x = "Time", title='A', y="")+
   theme(legend.position = "none") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
-```
 
-![](report2_files/figure-markdown_github/unnamed-chunk-7-1.png)
-
-``` r
 dat<-datos[datos$h_resp3=="Attack",] %>%
   mutate(s_type=recode_factor(s_type,
                               "Wild Juvenile"="Field-Juvenile",
                               "Wild Adult"="Field-Adult",
                               "Adult Captivity"="Captivity-Adult")) 
 
-ggplot(data = dat) +
+ta2<- ggplot(data = dat) +
   geom_mosaic(data=dat,aes(x = product(w_color, time2), 
                            fill=w_color, 
                            conds=product(s_type)), 
               na.rm=TRUE, divider=mosaic("v")) + 
   scale_fill_manual(values=c("#999999", "#E69F00")) +
-  labs(x = "Time", title='', y="")+
+  labs(x = "Time", title='B', y="")+
   theme(legend.position = "none") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
-```
 
-![](report2_files/figure-markdown_github/unnamed-chunk-7-2.png)
-
-``` r
 dat<-datos[datos$h_resp3=="Avoid",] %>%
   mutate(s_type=recode_factor(s_type,
                               "Wild Juvenile"="Field-Juvenile",
                               "Wild Adult"="Field-Adult",
                               "Adult Captivity"="Captivity-Adult")) 
 
-ggplot(data = dat) +
+ta3<- ggplot(data = dat) +
   geom_mosaic(data=dat,aes(x = product(w_color, time2), 
                            fill=w_color, 
                            conds=product(s_type)), 
               na.rm=TRUE, divider=mosaic("v")) + 
   scale_fill_manual(values=c("#999999", "#E69F00")) +
-  labs(x = "Time", title='', y="")+
+  labs(x = "Time", title='C', y="")+
   theme(legend.position = "none") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+grid.arrange(ta1, ta2, ta3, nrow = 3)
 ```
 
-![](report2_files/figure-markdown_github/unnamed-chunk-7-3.png)
+![](report2_files/figure-markdown_github/unnamed-chunk-8-1.png)
 
 ### Timelines (bar plots option)
 
@@ -350,18 +359,14 @@ dat<-datos[datos$h_resp3=="Detect",] %>%
                               "Adult Captivity"="Captivity-Adult")) %>% 
   group_by(s_type, w_color, time2) %>% summarise(n=n())
 
-  ggplot(data=dat, aes(x=time2, y=n, fill=w_color)) +
+t1<-   ggplot(data=dat, aes(x=time2, y=n, fill=w_color)) +
   geom_bar(stat="identity") + 
   facet_wrap(~s_type, ncol=5)+
   scale_fill_manual(values=c("#999999", "#E69F00")) +
-  labs(x = "Time", title='', y="")+
-  theme(legend.position = "none") +
+  labs(x = "Time", title='A', y="")+
+  #theme(legend.position = "none") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
-```
 
-![](report2_files/figure-markdown_github/unnamed-chunk-8-1.png)
-
-``` r
 dat<-datos[datos$h_resp3=="Attack",] %>%
   mutate(s_type=recode_factor(s_type,
                               "Wild Juvenile"="Field-Juvenile",
@@ -369,18 +374,14 @@ dat<-datos[datos$h_resp3=="Attack",] %>%
                               "Adult Captivity"="Captivity-Adult")) %>% 
   group_by(s_type, w_color, time2) %>% summarise(n=n())
 
-  ggplot(data=dat, aes(x=time2, y=n, fill=w_color)) +
+t2<-  ggplot(data=dat, aes(x=time2, y=n, fill=w_color)) +
   geom_bar(stat="identity") + 
   facet_wrap(~s_type, ncol=5)+
   scale_fill_manual(values=c("#999999", "#E69F00")) +
-  labs(x = "Time", title='', y="")+
-  theme(legend.position = "none") +
+  labs(x = "Time", title='B', y="")+
+  #theme(legend.position = "none") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
-```
-
-![](report2_files/figure-markdown_github/unnamed-chunk-8-2.png)
-
-``` r
+  
 dat<-datos[datos$h_resp3=="Avoid",] %>%
   mutate(s_type=recode_factor(s_type,
                               "Wild Juvenile"="Field-Juvenile",
@@ -388,16 +389,18 @@ dat<-datos[datos$h_resp3=="Avoid",] %>%
                               "Adult Captivity"="Captivity-Adult")) %>% 
   group_by(s_type, w_color, time2) %>% summarise(n=n())
 
-  ggplot(data=dat, aes(x=time2, y=n, fill=w_color)) +
+t3<-   ggplot(data=dat, aes(x=time2, y=n, fill=w_color)) +
   geom_bar(stat="identity") + 
   facet_wrap(~s_type, ncol=5)+
   scale_fill_manual(values=c("#999999", "#E69F00")) +
-  labs(x = "Time", title='', y="")+
-  theme(legend.position = "none") +
+  labs(x = "Time", title='C', y="")+
+ # theme(legend.position = "none") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  
+grid.arrange(t1, t2, t3, nrow = 3)
 ```
 
-![](report2_files/figure-markdown_github/unnamed-chunk-8-3.png)
+![](report2_files/figure-markdown_github/unnamed-chunk-9-1.png)
 
 ### Re-coding of BOB for Table 1
 
@@ -414,30 +417,30 @@ datos_model <- datos_model %>%
 with(datos_model, ftable(type,w_color2,h_resp3))
 ```
 
-    ##                        h_resp3 Attack Detect Avoid
+    ##                        h_resp3 Detect Attack Avoid
     ## type         w_color2                             
-    ## Baryconus    Black                  2      3     0
-    ##              PseudoBOB              5      9     1
+    ## Baryconus    Black                  3      2     0
+    ##              PseudoBOB              9      5     1
     ##              BOB                    0      0     0
-    ## Chromoteleia Black                  1     13     4
-    ##              PseudoBOB              0     31     6
+    ## Chromoteleia Black                 13      1     4
+    ##              PseudoBOB             31      0     6
     ##              BOB                    0      0     0
-    ## Macroteleia  Black                  2     15     4
+    ## Macroteleia  Black                 15      2     4
     ##              PseudoBOB              0      0     0
-    ##              BOB                    0      5     0
-    ## Scelio       Black                  3     17     5
-    ##              PseudoBOB              1      6     3
+    ##              BOB                    5      0     0
+    ## Scelio       Black                 17      3     5
+    ##              PseudoBOB              6      1     3
     ##              BOB                    0      0     0
 
 ``` r
 ftable(table(datos_model$w_color2,datos_model$h_resp3))
 ```
 
-    ##            Attack Detect Avoid
+    ##            Detect Attack Avoid
     ##                               
-    ## Black           8     48    13
-    ## PseudoBOB       6     46    10
-    ## BOB             0      5     0
+    ## Black          48      8    13
+    ## PseudoBOB      46      6    10
+    ## BOB             5      0     0
 
 ``` r
 ftable(table(datos_model$h_resp3, 
@@ -447,12 +450,12 @@ ftable(table(datos_model$h_resp3,
 
     ##                         Black BOB
     ##                                  
-    ## Attack Captivity Adult      2   2
-    ##        Field Adult          3   0
-    ##        Field Juvenile       3   4
     ## Detect Captivity Adult      6   5
     ##        Field Adult         23  28
     ##        Field Juvenile      19  18
+    ## Attack Captivity Adult      2   2
+    ##        Field Adult          3   0
+    ##        Field Juvenile       3   4
     ## Avoid  Captivity Adult      0   2
     ##        Field Adult         10   4
     ##        Field Juvenile       3   4

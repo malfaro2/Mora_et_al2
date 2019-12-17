@@ -149,14 +149,14 @@ ggplot(data = datos_model) +
   geom_mosaic(aes(x = product(h_resp3, s_type), 
                   fill=w_color), 
               na.rm=TRUE, divider=mosaic("v")) +  
-  #theme(legend.position = "none") +
+  theme(legend.position = "none") +
   scale_fill_manual(values=c("#999999", "#E69F00")) +labs(x = "Action", title='', y="")
 ```
 
 
 ### Timelines (original version)
 
-```{r}
+```{r fig.height=8, fig.width=5}
 options <- sort(unique(datos$h_resp3))
 dat<-datos[datos$h_resp3=="Detect",] %>%
   mutate(s_type=recode_factor(s_type,
@@ -164,7 +164,7 @@ dat<-datos[datos$h_resp3=="Detect",] %>%
                               "Wild Adult"="Field-Adult",
                               "Adult Captivity"="Captivity-Adult")) 
 
-ggplot(data = dat) +
+ta1<- ggplot(data = dat) +
   geom_mosaic(data=dat,aes(x = product(w_color, time2), 
                            fill=w_color, 
                            conds=product(s_type)), 
@@ -180,7 +180,7 @@ dat<-datos[datos$h_resp3=="Attack",] %>%
                               "Wild Adult"="Field-Adult",
                               "Adult Captivity"="Captivity-Adult")) 
 
-ggplot(data = dat) +
+ta2<- ggplot(data = dat) +
   geom_mosaic(data=dat,aes(x = product(w_color, time2), 
                            fill=w_color, 
                            conds=product(s_type)), 
@@ -196,7 +196,7 @@ dat<-datos[datos$h_resp3=="Avoid",] %>%
                               "Wild Adult"="Field-Adult",
                               "Adult Captivity"="Captivity-Adult")) 
 
-ggplot(data = dat) +
+ta3<- ggplot(data = dat) +
   geom_mosaic(data=dat,aes(x = product(w_color, time2), 
                            fill=w_color, 
                            conds=product(s_type)), 
@@ -205,6 +205,8 @@ ggplot(data = dat) +
   labs(x = "Time", title='C', y="")+
   theme(legend.position = "none") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+grid.arrange(ta1, ta2, ta3, nrow = 3)
 ```
 
 ### Timelines (bar plots option)
@@ -221,7 +223,7 @@ dat<-datos[datos$h_resp3=="Detect",] %>%
 t1<-   ggplot(data=dat, aes(x=time2, y=n, fill=w_color)) +
   geom_bar(stat="identity") + 
   facet_wrap(~s_type, ncol=5)+
-  scale_fill_manual(values=c("#999999", "#E69F00")) +
+  scale_fill_manual(name = "Wasp Color", values=c("#999999", "#E69F00")) +
   labs(x = "Time", title='A', y="")+
   #theme(legend.position = "none") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
@@ -236,7 +238,7 @@ dat<-datos[datos$h_resp3=="Attack",] %>%
 t2<-  ggplot(data=dat, aes(x=time2, y=n, fill=w_color)) +
   geom_bar(stat="identity") + 
   facet_wrap(~s_type, ncol=5)+
-  scale_fill_manual(values=c("#999999", "#E69F00")) +
+  scale_fill_manual(name = "Wasp Color", values=c("#999999", "#E69F00")) +
   labs(x = "Time", title='B', y="")+
   #theme(legend.position = "none") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
@@ -251,7 +253,7 @@ dat<-datos[datos$h_resp3=="Avoid",] %>%
 t3<-   ggplot(data=dat, aes(x=time2, y=n, fill=w_color)) +
   geom_bar(stat="identity") + 
   facet_wrap(~s_type, ncol=5)+
-  scale_fill_manual(values=c("#999999", "#E69F00")) +
+  scale_fill_manual(name = "Wasp Color",values=c("#999999", "#E69F00")) +
   labs(x = "Time", title='C', y="")+
  # theme(legend.position = "none") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
