@@ -158,7 +158,7 @@ ggplot(data = datos_model) +
 
 ### Timelines (original version)
 
-```{r fig.height=15, fig.width=5}
+```{r fig.height=15, fig.width=8}
 options <- sort(unique(datos$h_resp3))
 dat<-datos[datos$h_resp3=="Detect",] %>%
   mutate(s_type=recode_factor(s_type,
@@ -213,7 +213,7 @@ grid.arrange(ta1, ta2, ta3, nrow = 3)
 
 ### Timelines (bar plots option)
 
-```{r fig.height=8, fig.width=5}
+```{r fig.height=15, fig.width=8}
 options <- sort(unique(datos$h_resp3))
 dat<-datos[datos$h_resp3=="Detect",] %>%
   mutate(s_type=recode_factor(s_type,
