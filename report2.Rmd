@@ -72,7 +72,9 @@ Mauricio's suggestion:
 
 ```{r fig.width=6}
 bp1 <- ggplot(resumen, aes(x=w_color, y=w_size)) + 
-  geom_boxplot()+ facet_wrap(~type, ncol=4)+theme(legend.position = "none")+ # dejar la misma escala de spider size
+  geom_boxplot()+ facet_wrap(~type, ncol=4)+theme(legend.position = "none")+ 
+  # dejar la misma escala de spider size
+  theme(strip.text = element_text(face = "italic"))+
   labs(title="A",x="Wasp Color", y = "Wasp Size (mm)") +
   ylim(c(min(resumen$w_size),max(resumen$s_size))) 
 
@@ -156,7 +158,7 @@ ggplot(data = datos_model) +
 
 ### Timelines (original version)
 
-```{r fig.height=8, fig.width=5}
+```{r fig.height=15, fig.width=5}
 options <- sort(unique(datos$h_resp3))
 dat<-datos[datos$h_resp3=="Detect",] %>%
   mutate(s_type=recode_factor(s_type,

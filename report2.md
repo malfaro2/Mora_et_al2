@@ -116,7 +116,9 @@ Mauricio’s suggestion:
 
 ``` r
 bp1 <- ggplot(resumen, aes(x=w_color, y=w_size)) + 
-  geom_boxplot()+ facet_wrap(~type, ncol=4)+theme(legend.position = "none")+ # dejar la misma escala de spider size
+  geom_boxplot()+ facet_wrap(~type, ncol=4)+theme(legend.position = "none")+ 
+  # dejar la misma escala de spider size
+  theme(strip.text = element_text(face = "italic"))+
   labs(title="A",x="Wasp Color", y = "Wasp Size (mm)") +
   ylim(c(min(resumen$w_size),max(resumen$s_size))) 
 
@@ -285,7 +287,7 @@ ggplot(data = datos_model) +
   geom_mosaic(aes(x = product(h_resp3, s_type), 
                   fill=w_color), 
               na.rm=TRUE, divider=mosaic("v")) +  
-  #theme(legend.position = "none") +
+  theme(legend.position = "none") +
   scale_fill_manual(values=c("#999999", "#E69F00")) +labs(x = "Action", title='', y="")
 ```
 
@@ -362,7 +364,7 @@ dat<-datos[datos$h_resp3=="Detect",] %>%
 t1<-   ggplot(data=dat, aes(x=time2, y=n, fill=w_color)) +
   geom_bar(stat="identity") + 
   facet_wrap(~s_type, ncol=5)+
-  scale_fill_manual(values=c("#999999", "#E69F00")) +
+  scale_fill_manual(name = "Wasp Color", values=c("#999999", "#E69F00")) +
   labs(x = "Time", title='A', y="")+
   #theme(legend.position = "none") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
@@ -377,7 +379,7 @@ dat<-datos[datos$h_resp3=="Attack",] %>%
 t2<-  ggplot(data=dat, aes(x=time2, y=n, fill=w_color)) +
   geom_bar(stat="identity") + 
   facet_wrap(~s_type, ncol=5)+
-  scale_fill_manual(values=c("#999999", "#E69F00")) +
+  scale_fill_manual(name = "Wasp Color", values=c("#999999", "#E69F00")) +
   labs(x = "Time", title='B', y="")+
   #theme(legend.position = "none") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
@@ -392,7 +394,7 @@ dat<-datos[datos$h_resp3=="Avoid",] %>%
 t3<-   ggplot(data=dat, aes(x=time2, y=n, fill=w_color)) +
   geom_bar(stat="identity") + 
   facet_wrap(~s_type, ncol=5)+
-  scale_fill_manual(values=c("#999999", "#E69F00")) +
+  scale_fill_manual(name = "Wasp Color",values=c("#999999", "#E69F00")) +
   labs(x = "Time", title='C', y="")+
  # theme(legend.position = "none") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
