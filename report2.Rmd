@@ -330,7 +330,7 @@ prop.table(tab3)
 
 Statistical analysis was performed using the computing environment R (R Core Team, 2019). Data formatting and figures were prepared using the Tidyverse packages (Wickham, 2017). Multinomial logistic regression was done using the nnet package (Venables et al, 2002). 
 
-### Colophon
+# Colophon
 
 This report was generated on `r Sys.time()` using the following computational environment and dependencies: 
 

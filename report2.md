@@ -13,7 +13,7 @@
     cage](#experiment-of-spiders-with-false-prey-in-automated-cage)
     -   [Methods](#methods-1)
     -   [Results](#results-1)
-        -   [Colophon](#colophon)
+-   [Colophon](#colophon)
 
 Experiments of spiders with live prey
 =====================================
@@ -579,9 +579,10 @@ Core Team, 2019). Data formatting and figures were prepared using the
 Tidyverse packages (Wickham, 2017). Multinomial logistic regression was
 done using the nnet package (Venables et al, 2002).
 
-### Colophon
+Colophon
+========
 
-This report was generated on 2020-05-21 16:39:54 using the following
+This report was generated on 2020-05-21 16:43:38 using the following
 computational environment and dependencies:
 
 ``` r
@@ -709,4 +710,4 @@ if ("git2r" %in% installed.packages() & git2r::in_repository(path = ".")) git2r:
 
     ## Local:    master /Users/marce/Dropbox/Mora_CICIMA2
     ## Remote:   master @ origin (git@github.com:malfaro2/Mora_et_al2.git)
-    ## Head:     [f5ba17c] 2019-12-21: update plots
+    ## Head:     [f0af9f0] 2020-05-21: session info
