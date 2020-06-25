@@ -1,10 +1,10 @@
-# Unraveling the function of the black-orange-black (BOB) pattern in small parasitoid wasps (Hymenoptera: Platygastridae) through the eyes of jumping spiders (Aranae: Salticidae).
+# First evidence for aposematic function of a very common, but little-studied, color pattern in small insects.
 
 ## Introduction
 
 This is the code for the paper :
 
-Rebeca Mora-Castro, Marcela Alfaro-Córdoba, Marcela Hernández-Jiménez, Mauricio Fernández-Otárola, Michael Méndez-Rivera, Didier Ramírez-Morales, Carlos E. Rodríguez-Rodríguez, Andrés Durán-Rodríguez, Geovanna Rojas-Malavasi, Natalia Jiménez-Conejo, Paul Hanson-Snortum (2019). Unraveling the function of the black-orange-black (BOB) pattern in small parasitoid wasps (Hymenoptera: Platygastridae) through the eyes of jumping spiders (Aranae: Salticidae). To be submitted.
+Rebeca Mora-Castro, Marcela Alfaro-Córdoba, Marcela Hernández-Jiménez, Mauricio Fernández-Otárola, Michael Méndez-Rivera, Didier Ramírez-Morales, Carlos E. Rodríguez-Rodríguez, Andrés Durán-Rodríguez, Geovanna Rojas-Malavasi, Natalia Jiménez-Conejo, Paul Hanson-Snortum (2020). First evidence for aposematic function of a very common, but little-studied, color pattern in small insects. To be submitted.
 
 ### Contents:
 
