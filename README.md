@@ -14,9 +14,9 @@ Rebeca Mora-Castro, Marcela Alfaro-Córdoba, Marcela Hernández-Jiménez, Mauric
 
 * [Code to analyze the data](https://malfaro2.github.io/Mora_et_al2/report2)
 
-* [Toxicity data](https://github.com/malfaro2/Mora_et_al2/blob/master/CICA_data)
+* [Toxicity data](https://github.com/malfaro2/Mora_et_al2/blob/master/datos_CICA)
 
-* [Spectral data](https://github.com/malfaro2/Mora_et_al2/blob/master/color_data)
+* [Spectral data](https://github.com/malfaro2/Mora_et_al2/blob/master/data_CICIMA)
 
 ### Cite:
 
