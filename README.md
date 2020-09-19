@@ -4,7 +4,7 @@
 
 This is the code for the paper :
 
-Rebeca Mora-Castro, Marcela Alfaro-Córdoba, Marcela Hernández-Jiménez, Mauricio Fernández-Otárola, Michael Méndez-Rivera, Didier Ramírez-Morales, Carlos E. Rodríguez-Rodríguez, Andrés Durán-Rodríguez, Geovanna Rojas-Malavasi, Natalia Jiménez-Conejo, Paul Hanson-Snortum (2020). First evidence for an aposematic function of a very common color pattern in small insects. Submitted.
+Rebeca Mora-Castro, Marcela Alfaro-Córdoba, Marcela Hernández-Jiménez, Mauricio Fernández Otárola, Michael Méndez-Rivera, Didier Ramírez-Morales; Carlos E. Rodríguez-Rodríguez, Andrés Durán-Rodríguez, Paul E. Hanson (2020). First evidence for an aposematic function of a very common color pattern in small insects. Submitted to PLOS One.
 
 ### Contents:
 
@@ -14,6 +14,9 @@ Rebeca Mora-Castro, Marcela Alfaro-Córdoba, Marcela Hernández-Jiménez, Mauric
 
 * [Code to analyze the data](https://malfaro2.github.io/Mora_et_al2/report2)
 
+* [Toxicity data](https://github.com/malfaro2/Mora_et_al2/blob/master/CICA_data)
+
+* [Spectral data](https://github.com/malfaro2/Mora_et_al2/blob/master/color_data)
 
 ### Cite:
 

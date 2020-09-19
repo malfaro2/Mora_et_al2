@@ -28,9 +28,13 @@ theme_set(theme_bw(base_size=12, base_family='Arial'))
 
 ## Methods
 
-A total of 136 trials with three groups of spiders (68 field-juveniles, 51 field-adults and 17 captivity-adults) and live prey were carried out during which the following data were recorded: spider type (juvenile, adult, reared), wasp type (BOB or Black), spider behavior (behavioural scale explained before), time (0-5, 5-10, 10-30, 30-40 minutes), the distance between the spider and the prey during each behavior, presence/absence of a silk dragline, and wasp and spider body length. 
+A total of 136 trials with three groups of spiders (68 field-juveniles, 51 field-adults and 17 captive-adults) and live prey were carried out during which the following data were recorded: spider type (juvenile, adult, reared), wasp color (BOB or black), spider behavior (behavioral scale explained before), time when the spider reacted (0-5, 5-10, 10-20, 20-30, 30-40 minutes), the distance between the spider and the prey during each behavior, presence/absence of a silk dragline, and wasp and spider body length. For each of the 136 trials consisting of a wasp with a spider, the size of each was measured (S3 Fig.). Although there is size variation within each group, predator (spiders) and prey (wasps) fall within the same general range, with field-captured adult spiders being the largest.
 
-A multinomial logistic regression (Venables et al, 2002) was fitted to the data, where the behavioral responses were grouped in three general categories in order to correct for zero or near zero counts in each response category: a. Follow-stalk prey (Detect); b. Crouch, jump and contact prey (Attack); c. Detect prey and withdraw (Avoid). The remaining variables recorded were included as covariates. Additionally, the descriptive statistics were calculated according to time and behavior, in order to define a clear timeline of spider behavior in the controlled experiments using mosaic plots. 
+A multinomial logistic regression [26] was fitted to a simplified response: the most common activity for each spider was classified as “detect”, “attack” or “avoid”,  in order to correct for zero or near zero counts in each response category. The full model includes the following covariates: wasp color, spider type, wasp size, spider size, wasp genus and presence/absence of silk dragline. This model was compared with simplified versions, with the result being that the model with wasp color and spider type was the model with the best fit, according to the AIC statistic. Additionally, frequency of actions for each group of spiders were calculated according to 10 minute slots, in order to define a clear timeline of spider behavior in the controlled experiments. 
+
+A separate experiment with lures in the automated cage included 30 trials, during which the following variables were recorded: presence/absence of silk dragline, spider size, background experimental arena color (black or white) and color of false prey (BOB vs black) that first attracted the spider.
+The response variable in this case was constructed by registering whether L. jemineus responded in the same way to black and BOB lures coded as 1, and whether L. jemineus responded in a different way to black and BOB lures coded as 2. Contingency tables were calculated, along with a Chi Square independence test for the response versus each of the variables: presence/absence of silk dragline, background color and prey color that first attracted the spider.
+
 
 ## Results
 
@@ -53,23 +57,6 @@ ftable(table(resumen$w_color,resumen$typegr))
 ftable(table(resumen$w_color,resumen$s_type))
 ```
 
-Original choice of plot:
-
-```{r figure3}
-bp1 <- ggplot(resumen, aes(x=type, y=w_size)) + 
-  geom_boxplot()+ facet_wrap(~w_color)+theme(legend.position = "none")+ # dejar la misma escala de spider size
-  labs(title="A",x="Genera and Wasp Color", y = "Wasp Size (mm)") +
-  ylim(c(min(resumen$w_size),max(resumen$s_size))) 
-
-bp2 <- ggplot(resumen, aes(x=s_type, y=s_size)) + 
-  geom_boxplot()+labs(title="B",x="Type", y = "Spider Size (mm)") +
-  ylim(c(min(resumen$w_size),max(resumen$s_size))) 
-
-grid.arrange(bp1, bp2, nrow = 1, widths=2:1)
-```
-
-Mauricio's suggestion:
-
 ```{r fig.width=6}
 bp1 <- ggplot(resumen, aes(x=w_color, y=w_size)) + 
   geom_boxplot()+ facet_wrap(~type, ncol=4)+theme(legend.position = "none")+ 
@@ -85,7 +72,7 @@ bp2 <- ggplot(resumen, aes(x=s_type, y=s_size)) +
 grid.arrange(bp1, bp2, nrow = 1, widths=2:1)
 ```
 
-### Association between sizes (not included):
+### Association between sizes (not included in the paper):
 
 ```{r}
 bp <- ggplot(resumen, aes(x=w_size, y=s_size, color=s_type)) + geom_point()+ geom_smooth(method='lm', aes(color=s_type))+labs(color = "Spider Type")+
@@ -105,13 +92,14 @@ datos <- datos %>%
                         "5.Undetected or ignored"="Avoid",
                         "6.Detect visually and withdraw"="Avoid",
                         "7.None"="Avoid")) 
-
 d2<-datos %>% group_by(ID) %>% count(h_resp3) %>% top_n(1) 
 rep <- d2 %>% group_by(ID) %>% filter(n()>1) %>%
   summarize(h_resp3=unique(h_resp3)[1], n=n())
+
 datos2<-bind_rows(rep,d2[!d2$ID%in%rep$ID,]) %>% arrange(ID)
 datos_model <- inner_join(datos2, resumen, by="ID")
 with(datos_model, ftable(h_resp3,w_color, s_type)) 
+with(datos_model, ftable(h_resp3,w_color, type)) 
 ```
 
 ### Multinomial Model
@@ -160,6 +148,12 @@ ggplot(data = datos_model) +
 
 ```{r fig.height=15, fig.width=8}
 options <- sort(unique(datos$h_resp3))
+datos <- datos %>% mutate(time3= recode_factor(time2, 
+          "0-5 min"   = "0-10 min",
+          "5-10 min"  = "0-10 min",
+          "10-20 min" = "10-20 min",
+          "20-30 min" = "20-30 min",
+          "30-40 min" = "30-40 min"))
 dat<-datos[datos$h_resp3=="Detect",] %>%
   mutate(s_type=recode_factor(s_type,
                               "Wild Juvenile"="Field-Juvenile",
@@ -167,7 +161,7 @@ dat<-datos[datos$h_resp3=="Detect",] %>%
                               "Adult Captivity"="Captivity-Adult")) 
 
 ta1<- ggplot(data = dat) +
-  geom_mosaic(data=dat,aes(x = product(w_color, time2), 
+  geom_mosaic(data=dat,aes(x = product(w_color, time3), 
                            fill=w_color, 
                            conds=product(s_type)), 
               na.rm=TRUE, divider=mosaic("v")) + 
@@ -183,7 +177,7 @@ dat<-datos[datos$h_resp3=="Attack",] %>%
                               "Adult Captivity"="Captivity-Adult")) 
 
 ta2<- ggplot(data = dat) +
-  geom_mosaic(data=dat,aes(x = product(w_color, time2), 
+  geom_mosaic(data=dat,aes(x = product(w_color, time3), 
                            fill=w_color, 
                            conds=product(s_type)), 
               na.rm=TRUE, divider=mosaic("v")) + 
@@ -199,7 +193,7 @@ dat<-datos[datos$h_resp3=="Avoid",] %>%
                               "Adult Captivity"="Captivity-Adult")) 
 
 ta3<- ggplot(data = dat) +
-  geom_mosaic(data=dat,aes(x = product(w_color, time2), 
+  geom_mosaic(data=dat,aes(x = product(w_color, time3), 
                            fill=w_color, 
                            conds=product(s_type)), 
               na.rm=TRUE, divider=mosaic("v")) + 
@@ -220,9 +214,9 @@ dat<-datos[datos$h_resp3=="Detect",] %>%
                               "Wild Juvenile"="Field-Juvenile",
                               "Wild Adult"="Field-Adult",
                               "Adult Captivity"="Captivity-Adult")) %>% 
-  group_by(s_type, w_color, time2) %>% summarise(n=n())
+  group_by(s_type, w_color, time3) %>% summarise(n=n())
 
-t1<-   ggplot(data=dat, aes(x=time2, y=n, fill=w_color)) +
+t1<-   ggplot(data=dat, aes(x=time3, y=n, fill=w_color)) +
   geom_bar(stat="identity") + 
   facet_wrap(~s_type, ncol=5)+
   scale_fill_manual(name = "Wasp Color", values=c("#999999", "#E69F00")) +
@@ -235,9 +229,9 @@ dat<-datos[datos$h_resp3=="Attack",] %>%
                               "Wild Juvenile"="Field-Juvenile",
                               "Wild Adult"="Field-Adult",
                               "Adult Captivity"="Captivity-Adult")) %>% 
-  group_by(s_type, w_color, time2) %>% summarise(n=n())
+  group_by(s_type, w_color, time3) %>% summarise(n=n())
 
-t2<-  ggplot(data=dat, aes(x=time2, y=n, fill=w_color)) +
+t2<-  ggplot(data=dat, aes(x=time3, y=n, fill=w_color)) +
   geom_bar(stat="identity") + 
   facet_wrap(~s_type, ncol=5)+
   scale_fill_manual(name = "Wasp Color", values=c("#999999", "#E69F00")) +
@@ -250,9 +244,9 @@ dat<-datos[datos$h_resp3=="Avoid",] %>%
                               "Wild Juvenile"="Field-Juvenile",
                               "Wild Adult"="Field-Adult",
                               "Adult Captivity"="Captivity-Adult")) %>% 
-  group_by(s_type, w_color, time2) %>% summarise(n=n())
+  group_by(s_type, w_color, time3) %>% summarise(n=n())
 
-t3<-   ggplot(data=dat, aes(x=time2, y=n, fill=w_color)) +
+t3<-   ggplot(data=dat, aes(x=time3, y=n, fill=w_color)) +
   geom_bar(stat="identity") + 
   facet_wrap(~s_type, ncol=5)+
   scale_fill_manual(name = "Wasp Color",values=c("#999999", "#E69F00")) +
@@ -304,7 +298,7 @@ Contingency tables were calculated, along with a Chi Square independence test fo
 
 ## Results
 
-Table A1 presents the results from the experiment with false prey. Each contingency table was tested for independence, and the results were that there is no evidence of dependence in any of the cases. In other words, spider behaviors are not associated with background color, the color of lure that was detected first, the use or non-use of silk, or predator size. 
+Table 1 presents the results from the experiment with false prey. Each contingency table was tested for independence, and the results were that there is no evidence of dependence in any of the cases. In other words, spider behaviors are not associated with background color, the color of lure that was detected first, the use or non-use of silk, or predator size. 
 
 ```{r}
 library(DescTools)

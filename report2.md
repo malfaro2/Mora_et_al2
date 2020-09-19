@@ -2,8 +2,8 @@
     prey](#experiments-of-spiders-with-live-prey)
     -   [Methods](#methods)
     -   [Results](#results)
-        -   [Association between sizes (not
-            included):](#association-between-sizes-not-included)
+        -   [Association between sizes (not included in the
+            paper):](#association-between-sizes-not-included-in-the-paper)
         -   [Multinomial Model](#multinomial-model)
         -   [Timelines (original version)](#timelines-original-version)
         -   [Timelines (bar plots option)](#timelines-bar-plots-option)
@@ -22,22 +22,42 @@ Methods
 -------
 
 A total of 136 trials with three groups of spiders (68 field-juveniles,
-51 field-adults and 17 captivity-adults) and live prey were carried out
+51 field-adults and 17 captive-adults) and live prey were carried out
 during which the following data were recorded: spider type (juvenile,
-adult, reared), wasp type (BOB or Black), spider behavior (behavioural
-scale explained before), time (0-5, 5-10, 10-30, 30-40 minutes), the
-distance between the spider and the prey during each behavior,
-presence/absence of a silk dragline, and wasp and spider body length.
+adult, reared), wasp color (BOB or black), spider behavior (behavioral
+scale explained before), time when the spider reacted (0-5, 5-10, 10-20,
+20-30, 30-40 minutes), the distance between the spider and the prey
+during each behavior, presence/absence of a silk dragline, and wasp and
+spider body length. For each of the 136 trials consisting of a wasp with
+a spider, the size of each was measured (S3 Fig.). Although there is
+size variation within each group, predator (spiders) and prey (wasps)
+fall within the same general range, with field-captured adult spiders
+being the largest.
 
-A multinomial logistic regression (Venables et al, 2002) was fitted to
-the data, where the behavioral responses were grouped in three general
-categories in order to correct for zero or near zero counts in each
-response category: a. Follow-stalk prey (Detect); b. Crouch, jump and
-contact prey (Attack); c. Detect prey and withdraw (Avoid). The
-remaining variables recorded were included as covariates. Additionally,
-the descriptive statistics were calculated according to time and
-behavior, in order to define a clear timeline of spider behavior in the
-controlled experiments using mosaic plots.
+A multinomial logistic regression \[26\] was fitted to a simplified
+response: the most common activity for each spider was classified as
+“detect”, “attack” or “avoid”, in order to correct for zero or near zero
+counts in each response category. The full model includes the following
+covariates: wasp color, spider type, wasp size, spider size, wasp genus
+and presence/absence of silk dragline. This model was compared with
+simplified versions, with the result being that the model with wasp
+color and spider type was the model with the best fit, according to the
+AIC statistic. Additionally, frequency of actions for each group of
+spiders were calculated according to 10 minute slots, in order to define
+a clear timeline of spider behavior in the controlled experiments.
+
+A separate experiment with lures in the automated cage included 30
+trials, during which the following variables were recorded:
+presence/absence of silk dragline, spider size, background experimental
+arena color (black or white) and color of false prey (BOB vs black) that
+first attracted the spider. The response variable in this case was
+constructed by registering whether L. jemineus responded in the same way
+to black and BOB lures coded as 1, and whether L. jemineus responded in
+a different way to black and BOB lures coded as 2. Contingency tables
+were calculated, along with a Chi Square independence test for the
+response versus each of the variables: presence/absence of silk
+dragline, background color and prey color that first attracted the
+spider.
 
 Results
 -------
@@ -69,7 +89,11 @@ resumen <- datos %>% group_by(ID) %>%
             s_size=(unique(s_size)), 
             drag=(unique(drag))) %>% 
   arrange(type, w_color, s_type)
+```
 
+    ## `summarise()` ungrouping output (override with `.groups` argument)
+
+``` r
 ftable(table(resumen$w_color,resumen$type))
 ```
 
@@ -96,25 +120,6 @@ ftable(table(resumen$w_color,resumen$s_type))
     ## Black                8          36             25
     ## BOB                  9          32             26
 
-Original choice of plot:
-
-``` r
-bp1 <- ggplot(resumen, aes(x=type, y=w_size)) + 
-  geom_boxplot()+ facet_wrap(~w_color)+theme(legend.position = "none")+ # dejar la misma escala de spider size
-  labs(title="A",x="Genera and Wasp Color", y = "Wasp Size (mm)") +
-  ylim(c(min(resumen$w_size),max(resumen$s_size))) 
-
-bp2 <- ggplot(resumen, aes(x=s_type, y=s_size)) + 
-  geom_boxplot()+labs(title="B",x="Type", y = "Spider Size (mm)") +
-  ylim(c(min(resumen$w_size),max(resumen$s_size))) 
-
-grid.arrange(bp1, bp2, nrow = 1, widths=2:1)
-```
-
-![](report2_files/figure-markdown_github/figure3-1.png)
-
-Mauricio’s suggestion:
-
 ``` r
 bp1 <- ggplot(resumen, aes(x=w_color, y=w_size)) + 
   geom_boxplot()+ facet_wrap(~type, ncol=4)+theme(legend.position = "none")+ 
@@ -132,13 +137,15 @@ grid.arrange(bp1, bp2, nrow = 1, widths=2:1)
 
 ![](report2_files/figure-markdown_github/unnamed-chunk-2-1.png)
 
-### Association between sizes (not included):
+### Association between sizes (not included in the paper):
 
 ``` r
 bp <- ggplot(resumen, aes(x=w_size, y=s_size, color=s_type)) + geom_point()+ geom_smooth(method='lm', aes(color=s_type))+labs(color = "Spider Type")+
   labs(title="",x="Wasp Size (mm)", y = "Spider Size (mm)")
 bp
 ```
+
+    ## `geom_smooth()` using formula 'y ~ x'
 
 ![](report2_files/figure-markdown_github/unnamed-chunk-3-1.png)
 
@@ -180,7 +187,6 @@ datos <- datos %>%
                         "5.Undetected or ignored"="Avoid",
                         "6.Detect visually and withdraw"="Avoid",
                         "7.None"="Avoid")) 
-
 d2<-datos %>% group_by(ID) %>% count(h_resp3) %>% top_n(1) 
 ```
 
@@ -189,6 +195,11 @@ d2<-datos %>% group_by(ID) %>% count(h_resp3) %>% top_n(1)
 ``` r
 rep <- d2 %>% group_by(ID) %>% filter(n()>1) %>%
   summarize(h_resp3=unique(h_resp3)[1], n=n())
+```
+
+    ## `summarise()` ungrouping output (override with `.groups` argument)
+
+``` r
 datos2<-bind_rows(rep,d2[!d2$ID%in%rep$ID,]) %>% arrange(ID)
 datos_model <- inner_join(datos2, resumen, by="ID")
 with(datos_model, ftable(h_resp3,w_color, s_type)) 
@@ -202,6 +213,19 @@ with(datos_model, ftable(h_resp3,w_color, s_type))
     ##         BOB                          5          28             18
     ## Avoid   Black                        0          10              3
     ##         BOB                          2           4              4
+
+``` r
+with(datos_model, ftable(h_resp3,w_color, type)) 
+```
+
+    ##                 type Baryconus Chromoteleia Macroteleia Scelio
+    ## h_resp3 w_color                                               
+    ## Attack  Black                2            1           2      3
+    ##         BOB                  5            0           0      1
+    ## Detect  Black                3           13          15     17
+    ##         BOB                  9           31           5      6
+    ## Avoid   Black                0            4           4      5
+    ##         BOB                  1            6           0      3
 
 ### Multinomial Model
 
@@ -298,6 +322,12 @@ ggplot(data = datos_model) +
 
 ``` r
 options <- sort(unique(datos$h_resp3))
+datos <- datos %>% mutate(time3= recode_factor(time2, 
+          "0-5 min"   = "0-10 min",
+          "5-10 min"  = "0-10 min",
+          "10-20 min" = "10-20 min",
+          "20-30 min" = "20-30 min",
+          "30-40 min" = "30-40 min"))
 dat<-datos[datos$h_resp3=="Detect",] %>%
   mutate(s_type=recode_factor(s_type,
                               "Wild Juvenile"="Field-Juvenile",
@@ -305,7 +335,7 @@ dat<-datos[datos$h_resp3=="Detect",] %>%
                               "Adult Captivity"="Captivity-Adult")) 
 
 ta1<- ggplot(data = dat) +
-  geom_mosaic(data=dat,aes(x = product(w_color, time2), 
+  geom_mosaic(data=dat,aes(x = product(w_color, time3), 
                            fill=w_color, 
                            conds=product(s_type)), 
               na.rm=TRUE, divider=mosaic("v")) + 
@@ -321,7 +351,7 @@ dat<-datos[datos$h_resp3=="Attack",] %>%
                               "Adult Captivity"="Captivity-Adult")) 
 
 ta2<- ggplot(data = dat) +
-  geom_mosaic(data=dat,aes(x = product(w_color, time2), 
+  geom_mosaic(data=dat,aes(x = product(w_color, time3), 
                            fill=w_color, 
                            conds=product(s_type)), 
               na.rm=TRUE, divider=mosaic("v")) + 
@@ -337,7 +367,7 @@ dat<-datos[datos$h_resp3=="Avoid",] %>%
                               "Adult Captivity"="Captivity-Adult")) 
 
 ta3<- ggplot(data = dat) +
-  geom_mosaic(data=dat,aes(x = product(w_color, time2), 
+  geom_mosaic(data=dat,aes(x = product(w_color, time3), 
                            fill=w_color, 
                            conds=product(s_type)), 
               na.rm=TRUE, divider=mosaic("v")) + 
@@ -360,9 +390,13 @@ dat<-datos[datos$h_resp3=="Detect",] %>%
                               "Wild Juvenile"="Field-Juvenile",
                               "Wild Adult"="Field-Adult",
                               "Adult Captivity"="Captivity-Adult")) %>% 
-  group_by(s_type, w_color, time2) %>% summarise(n=n())
+  group_by(s_type, w_color, time3) %>% summarise(n=n())
+```
 
-t1<-   ggplot(data=dat, aes(x=time2, y=n, fill=w_color)) +
+    ## `summarise()` regrouping output by 's_type', 'w_color' (override with `.groups` argument)
+
+``` r
+t1<-   ggplot(data=dat, aes(x=time3, y=n, fill=w_color)) +
   geom_bar(stat="identity") + 
   facet_wrap(~s_type, ncol=5)+
   scale_fill_manual(name = "Wasp Color", values=c("#999999", "#E69F00")) +
@@ -375,9 +409,13 @@ dat<-datos[datos$h_resp3=="Attack",] %>%
                               "Wild Juvenile"="Field-Juvenile",
                               "Wild Adult"="Field-Adult",
                               "Adult Captivity"="Captivity-Adult")) %>% 
-  group_by(s_type, w_color, time2) %>% summarise(n=n())
+  group_by(s_type, w_color, time3) %>% summarise(n=n())
+```
 
-t2<-  ggplot(data=dat, aes(x=time2, y=n, fill=w_color)) +
+    ## `summarise()` regrouping output by 's_type', 'w_color' (override with `.groups` argument)
+
+``` r
+t2<-  ggplot(data=dat, aes(x=time3, y=n, fill=w_color)) +
   geom_bar(stat="identity") + 
   facet_wrap(~s_type, ncol=5)+
   scale_fill_manual(name = "Wasp Color", values=c("#999999", "#E69F00")) +
@@ -390,9 +428,13 @@ dat<-datos[datos$h_resp3=="Avoid",] %>%
                               "Wild Juvenile"="Field-Juvenile",
                               "Wild Adult"="Field-Adult",
                               "Adult Captivity"="Captivity-Adult")) %>% 
-  group_by(s_type, w_color, time2) %>% summarise(n=n())
+  group_by(s_type, w_color, time3) %>% summarise(n=n())
+```
 
-t3<-   ggplot(data=dat, aes(x=time2, y=n, fill=w_color)) +
+    ## `summarise()` regrouping output by 's_type', 'w_color' (override with `.groups` argument)
+
+``` r
+t3<-   ggplot(data=dat, aes(x=time3, y=n, fill=w_color)) +
   geom_bar(stat="identity") + 
   facet_wrap(~s_type, ncol=5)+
   scale_fill_manual(name = "Wasp Color",values=c("#999999", "#E69F00")) +
@@ -496,7 +538,7 @@ spider.
 Results
 -------
 
-Table A1 presents the results from the experiment with false prey. Each
+Table 1 presents the results from the experiment with false prey. Each
 contingency table was tested for independence, and the results were that
 there is no evidence of dependence in any of the cases. In other words,
 spider behaviors are not associated with background color, the color of
@@ -582,7 +624,7 @@ done using the nnet package (Venables et al, 2002).
 Colophon
 ========
 
-This report was generated on 2020-05-21 16:43:38 using the following
+This report was generated on 2020-09-19 14:58:11 using the following
 computational environment and dependencies:
 
 ``` r
@@ -592,114 +634,121 @@ if ("devtools" %in% installed.packages()) devtools::session_info()
 
     ## ─ Session info ───────────────────────────────────────────────────────────────
     ##  setting  value                       
-    ##  version  R version 3.6.2 (2019-12-12)
-    ##  os       macOS Catalina 10.15.4      
-    ##  system   x86_64, darwin15.6.0        
+    ##  version  R version 4.0.2 (2020-06-22)
+    ##  os       macOS Catalina 10.15.6      
+    ##  system   x86_64, darwin17.0          
     ##  ui       X11                         
     ##  language (EN)                        
     ##  collate  en_US.UTF-8                 
     ##  ctype    en_US.UTF-8                 
     ##  tz       America/Costa_Rica          
-    ##  date     2020-05-21                  
+    ##  date     2020-09-19                  
     ## 
     ## ─ Packages ───────────────────────────────────────────────────────────────────
-    ##  package      * version    date       lib source        
-    ##  assertthat     0.2.1      2019-03-21 [1] CRAN (R 3.6.0)
-    ##  backports      1.1.5      2019-10-02 [1] CRAN (R 3.6.0)
-    ##  boot           1.3-23     2019-07-05 [1] CRAN (R 3.6.2)
-    ##  broom          0.5.2      2019-04-07 [1] CRAN (R 3.6.0)
-    ##  callr          3.4.3      2020-03-28 [1] CRAN (R 3.6.2)
-    ##  cellranger     1.1.0      2016-07-27 [1] CRAN (R 3.6.0)
-    ##  cli            2.0.2      2020-02-28 [1] CRAN (R 3.6.0)
-    ##  colorspace     1.4-1      2019-03-18 [1] CRAN (R 3.6.0)
-    ##  crayon         1.3.4      2017-09-16 [1] CRAN (R 3.6.0)
-    ##  data.table     1.12.8     2019-12-09 [1] CRAN (R 3.6.0)
-    ##  DBI            1.1.0      2019-12-15 [1] CRAN (R 3.6.0)
-    ##  dbplyr         1.4.2      2019-06-17 [1] CRAN (R 3.6.0)
-    ##  desc           1.2.0      2018-05-01 [1] CRAN (R 3.6.0)
-    ##  DescTools    * 0.99.30    2019-10-22 [1] CRAN (R 3.6.0)
-    ##  devtools       2.3.0      2020-04-10 [1] CRAN (R 3.6.2)
-    ##  digest         0.6.25     2020-02-23 [1] CRAN (R 3.6.0)
-    ##  dplyr        * 0.8.5      2020-03-07 [1] CRAN (R 3.6.0)
-    ##  ellipsis       0.3.0      2019-09-20 [1] CRAN (R 3.6.0)
-    ##  evaluate       0.14       2019-05-28 [1] CRAN (R 3.6.0)
-    ##  expm           0.999-4    2019-03-21 [1] CRAN (R 3.6.0)
-    ##  extrafont    * 0.17       2014-12-08 [1] CRAN (R 3.6.0)
-    ##  extrafontdb    1.0        2012-06-11 [1] CRAN (R 3.6.0)
-    ##  fansi          0.4.1      2020-01-08 [1] CRAN (R 3.6.0)
-    ##  farver         2.0.3      2020-01-16 [1] CRAN (R 3.6.0)
-    ##  forcats      * 0.4.0      2019-02-17 [1] CRAN (R 3.6.0)
-    ##  foreign      * 0.8-72     2019-08-02 [1] CRAN (R 3.6.2)
-    ##  fs             1.3.1      2019-05-06 [1] CRAN (R 3.6.0)
-    ##  generics       0.0.2      2018-11-29 [1] CRAN (R 3.6.0)
-    ##  ggmosaic     * 0.2.0      2018-09-12 [1] CRAN (R 3.6.0)
-    ##  ggplot2      * 3.2.1      2019-08-10 [1] CRAN (R 3.6.0)
-    ##  glue           1.4.0      2020-04-03 [1] CRAN (R 3.6.2)
-    ##  gridExtra    * 2.3        2017-09-09 [1] CRAN (R 3.6.0)
-    ##  gtable         0.3.0      2019-03-25 [1] CRAN (R 3.6.0)
-    ##  haven          2.2.0      2019-11-08 [1] CRAN (R 3.6.0)
-    ##  hms            0.5.3      2020-01-08 [1] CRAN (R 3.6.0)
-    ##  htmltools      0.4.0      2019-10-04 [1] CRAN (R 3.6.0)
-    ##  htmlwidgets    1.5.1      2019-10-08 [1] CRAN (R 3.6.0)
-    ##  httr           1.4.1      2019-08-05 [1] CRAN (R 3.6.0)
-    ##  jsonlite       1.6.1      2020-02-02 [1] CRAN (R 3.6.0)
-    ##  knitr          1.27       2020-01-16 [1] CRAN (R 3.6.0)
-    ##  labeling       0.3        2014-08-23 [1] CRAN (R 3.6.0)
-    ##  lattice        0.20-38    2018-11-04 [1] CRAN (R 3.6.2)
-    ##  lazyeval       0.2.2      2019-03-15 [1] CRAN (R 3.6.0)
-    ##  lifecycle      0.2.0      2020-03-06 [1] CRAN (R 3.6.0)
-    ##  lubridate      1.7.8      2020-04-06 [1] CRAN (R 3.6.2)
-    ##  magrittr       1.5        2014-11-22 [1] CRAN (R 3.6.0)
-    ##  MASS           7.3-51.4   2019-03-31 [1] CRAN (R 3.6.2)
-    ##  Matrix         1.2-18     2019-11-27 [1] CRAN (R 3.6.2)
-    ##  memoise        1.1.0      2017-04-21 [1] CRAN (R 3.6.0)
-    ##  modelr         0.1.6      2020-02-22 [1] CRAN (R 3.6.0)
-    ##  munsell        0.5.0      2018-06-12 [1] CRAN (R 3.6.0)
-    ##  mvtnorm        1.0-12     2020-01-09 [1] CRAN (R 3.6.0)
-    ##  nlme           3.1-142    2019-11-07 [1] CRAN (R 3.6.2)
-    ##  nnet         * 7.3-12     2016-02-02 [1] CRAN (R 3.6.2)
-    ##  pillar         1.4.3      2019-12-20 [1] CRAN (R 3.6.0)
-    ##  pkgbuild       1.0.6      2019-10-09 [1] CRAN (R 3.6.0)
-    ##  pkgconfig      2.0.3      2019-09-22 [1] CRAN (R 3.6.0)
-    ##  pkgload        1.0.2      2018-10-29 [1] CRAN (R 3.6.0)
-    ##  plotly         4.9.0      2019-04-10 [1] CRAN (R 3.6.0)
-    ##  plyr           1.8.5      2019-12-10 [1] CRAN (R 3.6.0)
-    ##  prettyunits    1.1.1      2020-01-24 [1] CRAN (R 3.6.0)
-    ##  processx       3.4.1      2019-07-18 [1] CRAN (R 3.6.0)
-    ##  productplots   0.1.1      2016-07-02 [1] CRAN (R 3.6.0)
-    ##  ps             1.3.0      2018-12-21 [1] CRAN (R 3.6.0)
-    ##  purrr        * 0.3.4      2020-04-17 [1] CRAN (R 3.6.2)
-    ##  R6             2.4.1      2019-11-12 [1] CRAN (R 3.6.0)
-    ##  Rcpp           1.0.4.6    2020-04-09 [1] CRAN (R 3.6.2)
-    ##  readr        * 1.3.1      2018-12-21 [1] CRAN (R 3.6.0)
-    ##  readxl       * 1.3.1      2019-03-13 [1] CRAN (R 3.6.0)
-    ##  remotes        2.1.1      2020-02-15 [1] CRAN (R 3.6.0)
-    ##  reprex         0.3.0      2019-05-16 [1] CRAN (R 3.6.0)
-    ##  reshape2     * 1.4.3      2017-12-11 [1] CRAN (R 3.6.0)
-    ##  rlang          0.4.5      2020-03-01 [1] CRAN (R 3.6.0)
-    ##  rmarkdown      2.1        2020-01-20 [1] CRAN (R 3.6.0)
-    ##  rprojroot      1.3-2      2018-01-03 [1] CRAN (R 3.6.0)
-    ##  rstudioapi     0.11       2020-02-07 [1] CRAN (R 3.6.0)
-    ##  Rttf2pt1       1.3.7      2018-06-29 [1] CRAN (R 3.6.0)
-    ##  rvest          0.3.5      2019-11-08 [1] CRAN (R 3.6.0)
-    ##  scales         1.1.0      2019-11-18 [1] CRAN (R 3.6.0)
-    ##  sessioninfo    1.1.1      2018-11-05 [1] CRAN (R 3.6.0)
-    ##  stringi        1.4.6      2020-02-17 [1] CRAN (R 3.6.0)
-    ##  stringr      * 1.4.0      2019-02-10 [1] CRAN (R 3.6.0)
-    ##  testthat       2.3.2      2020-03-02 [1] CRAN (R 3.6.0)
-    ##  tibble       * 3.0.1      2020-04-20 [1] CRAN (R 3.6.2)
-    ##  tidyr        * 1.0.2      2020-01-24 [1] CRAN (R 3.6.0)
-    ##  tidyselect     1.0.0      2020-01-27 [1] CRAN (R 3.6.0)
-    ##  tidyverse    * 1.3.0      2019-11-21 [1] CRAN (R 3.6.0)
-    ##  usethis        1.6.0      2020-04-09 [1] CRAN (R 3.6.2)
-    ##  vctrs          0.2.4      2020-03-10 [1] CRAN (R 3.6.0)
-    ##  viridisLite    0.3.0      2018-02-01 [1] CRAN (R 3.6.0)
-    ##  withr          2.1.2.9000 2020-01-31 [1] local         
-    ##  xfun           0.12       2020-01-13 [1] CRAN (R 3.6.0)
-    ##  xml2           1.2.2      2019-08-09 [1] CRAN (R 3.6.0)
-    ##  yaml           2.2.0      2018-07-25 [1] CRAN (R 3.6.0)
+    ##  package      * version  date       lib source        
+    ##  assertthat     0.2.1    2019-03-21 [1] CRAN (R 4.0.2)
+    ##  backports      1.1.10   2020-09-15 [1] CRAN (R 4.0.2)
+    ##  blob           1.2.1    2020-01-20 [1] CRAN (R 4.0.2)
+    ##  boot           1.3-25   2020-04-26 [1] CRAN (R 4.0.2)
+    ##  broom          0.7.0    2020-07-09 [1] CRAN (R 4.0.2)
+    ##  callr          3.4.4    2020-09-07 [1] CRAN (R 4.0.2)
+    ##  cellranger     1.1.0    2016-07-27 [1] CRAN (R 4.0.2)
+    ##  class          7.3-17   2020-04-26 [1] CRAN (R 4.0.2)
+    ##  cli            2.0.2    2020-02-28 [1] CRAN (R 4.0.2)
+    ##  colorspace     1.4-1    2019-03-18 [1] CRAN (R 4.0.2)
+    ##  crayon         1.3.4    2017-09-16 [1] CRAN (R 4.0.2)
+    ##  data.table     1.13.0   2020-07-24 [1] CRAN (R 4.0.2)
+    ##  DBI            1.1.0    2019-12-15 [1] CRAN (R 4.0.2)
+    ##  dbplyr         1.4.4    2020-05-27 [1] CRAN (R 4.0.2)
+    ##  desc           1.2.0    2018-05-01 [1] CRAN (R 4.0.2)
+    ##  DescTools    * 0.99.38  2020-09-07 [1] CRAN (R 4.0.2)
+    ##  devtools       2.3.2    2020-09-18 [1] CRAN (R 4.0.2)
+    ##  digest         0.6.25   2020-02-23 [1] CRAN (R 4.0.2)
+    ##  dplyr        * 1.0.2    2020-08-18 [1] CRAN (R 4.0.2)
+    ##  e1071          1.7-3    2019-11-26 [1] CRAN (R 4.0.2)
+    ##  ellipsis       0.3.1    2020-05-15 [1] CRAN (R 4.0.2)
+    ##  evaluate       0.14     2019-05-28 [1] CRAN (R 4.0.1)
+    ##  Exact          2.0      2019-10-14 [1] CRAN (R 4.0.2)
+    ##  expm           0.999-5  2020-07-20 [1] CRAN (R 4.0.2)
+    ##  extrafont    * 0.17     2014-12-08 [1] CRAN (R 4.0.2)
+    ##  extrafontdb    1.0      2012-06-11 [1] CRAN (R 4.0.2)
+    ##  fansi          0.4.1    2020-01-08 [1] CRAN (R 4.0.2)
+    ##  farver         2.0.3    2020-01-16 [1] CRAN (R 4.0.2)
+    ##  forcats      * 0.5.0    2020-03-01 [1] CRAN (R 4.0.2)
+    ##  foreign      * 0.8-80   2020-05-24 [1] CRAN (R 4.0.2)
+    ##  fs             1.5.0    2020-07-31 [1] CRAN (R 4.0.2)
+    ##  generics       0.0.2    2018-11-29 [1] CRAN (R 4.0.2)
+    ##  ggmosaic     * 0.2.0    2018-09-12 [1] CRAN (R 4.0.2)
+    ##  ggplot2      * 3.3.2    2020-06-19 [1] CRAN (R 4.0.2)
+    ##  gld            2.6.2    2020-01-08 [1] CRAN (R 4.0.2)
+    ##  glue           1.4.2    2020-08-27 [1] CRAN (R 4.0.2)
+    ##  gridExtra    * 2.3      2017-09-09 [1] CRAN (R 4.0.2)
+    ##  gtable         0.3.0    2019-03-25 [1] CRAN (R 4.0.2)
+    ##  haven          2.3.1    2020-06-01 [1] CRAN (R 4.0.2)
+    ##  hms            0.5.3    2020-01-08 [1] CRAN (R 4.0.2)
+    ##  htmltools      0.5.0    2020-06-16 [1] CRAN (R 4.0.2)
+    ##  htmlwidgets    1.5.1    2019-10-08 [1] CRAN (R 4.0.2)
+    ##  httr           1.4.2    2020-07-20 [1] CRAN (R 4.0.2)
+    ##  jsonlite       1.7.1    2020-09-07 [1] CRAN (R 4.0.2)
+    ##  knitr          1.29     2020-06-23 [1] CRAN (R 4.0.2)
+    ##  labeling       0.3      2014-08-23 [1] CRAN (R 4.0.2)
+    ##  lattice        0.20-41  2020-04-02 [1] CRAN (R 4.0.2)
+    ##  lazyeval       0.2.2    2019-03-15 [1] CRAN (R 4.0.2)
+    ##  lifecycle      0.2.0    2020-03-06 [1] CRAN (R 4.0.2)
+    ##  lmom           2.8      2019-03-12 [1] CRAN (R 4.0.2)
+    ##  lubridate      1.7.9    2020-06-08 [1] CRAN (R 4.0.2)
+    ##  magrittr       1.5      2014-11-22 [1] CRAN (R 4.0.2)
+    ##  MASS           7.3-51.6 2020-04-26 [1] CRAN (R 4.0.2)
+    ##  Matrix         1.2-18   2019-11-27 [1] CRAN (R 4.0.2)
+    ##  memoise        1.1.0    2017-04-21 [1] CRAN (R 4.0.2)
+    ##  mgcv           1.8-31   2019-11-09 [1] CRAN (R 4.0.2)
+    ##  modelr         0.1.8    2020-05-19 [1] CRAN (R 4.0.2)
+    ##  munsell        0.5.0    2018-06-12 [1] CRAN (R 4.0.2)
+    ##  mvtnorm        1.1-1    2020-06-09 [1] CRAN (R 4.0.2)
+    ##  nlme           3.1-148  2020-05-24 [1] CRAN (R 4.0.2)
+    ##  nnet         * 7.3-14   2020-04-26 [1] CRAN (R 4.0.2)
+    ##  pillar         1.4.6    2020-07-10 [1] CRAN (R 4.0.2)
+    ##  pkgbuild       1.1.0    2020-07-13 [1] CRAN (R 4.0.2)
+    ##  pkgconfig      2.0.3    2019-09-22 [1] CRAN (R 4.0.2)
+    ##  pkgload        1.1.0    2020-05-29 [1] CRAN (R 4.0.2)
+    ##  plotly         4.9.2.1  2020-04-04 [1] CRAN (R 4.0.2)
+    ##  plyr           1.8.6    2020-03-03 [1] CRAN (R 4.0.2)
+    ##  prettyunits    1.1.1    2020-01-24 [1] CRAN (R 4.0.2)
+    ##  processx       3.4.4    2020-09-03 [1] CRAN (R 4.0.2)
+    ##  productplots   0.1.1    2016-07-02 [1] CRAN (R 4.0.2)
+    ##  ps             1.3.4    2020-08-11 [1] CRAN (R 4.0.2)
+    ##  purrr        * 0.3.4    2020-04-17 [1] CRAN (R 4.0.2)
+    ##  R6             2.4.1    2019-11-12 [1] CRAN (R 4.0.2)
+    ##  Rcpp           1.0.5    2020-07-06 [1] CRAN (R 4.0.2)
+    ##  readr        * 1.3.1    2018-12-21 [1] CRAN (R 4.0.2)
+    ##  readxl       * 1.3.1    2019-03-13 [1] CRAN (R 4.0.2)
+    ##  remotes        2.2.0    2020-07-21 [1] CRAN (R 4.0.2)
+    ##  reprex         0.3.0    2019-05-16 [1] CRAN (R 4.0.2)
+    ##  reshape2     * 1.4.4    2020-04-09 [1] CRAN (R 4.0.2)
+    ##  rlang          0.4.7    2020-07-09 [1] CRAN (R 4.0.2)
+    ##  rmarkdown      2.3      2020-06-18 [1] CRAN (R 4.0.2)
+    ##  rprojroot      1.3-2    2018-01-03 [1] CRAN (R 4.0.2)
+    ##  rstudioapi     0.11     2020-02-07 [1] CRAN (R 4.0.2)
+    ##  Rttf2pt1       1.3.8    2020-01-10 [1] CRAN (R 4.0.2)
+    ##  rvest          0.3.6    2020-07-25 [1] CRAN (R 4.0.2)
+    ##  scales         1.1.1    2020-05-11 [1] CRAN (R 4.0.2)
+    ##  sessioninfo    1.1.1    2018-11-05 [1] CRAN (R 4.0.2)
+    ##  stringi        1.5.3    2020-09-09 [1] CRAN (R 4.0.2)
+    ##  stringr      * 1.4.0    2019-02-10 [1] CRAN (R 4.0.2)
+    ##  testthat       2.3.2    2020-03-02 [1] CRAN (R 4.0.2)
+    ##  tibble       * 3.0.3    2020-07-10 [1] CRAN (R 4.0.2)
+    ##  tidyr        * 1.1.2    2020-08-27 [1] CRAN (R 4.0.2)
+    ##  tidyselect     1.1.0    2020-05-11 [1] CRAN (R 4.0.2)
+    ##  tidyverse    * 1.3.0    2019-11-21 [1] CRAN (R 4.0.2)
+    ##  usethis        1.6.3    2020-09-17 [1] CRAN (R 4.0.2)
+    ##  vctrs          0.3.4    2020-08-29 [1] CRAN (R 4.0.2)
+    ##  viridisLite    0.3.0    2018-02-01 [1] CRAN (R 4.0.1)
+    ##  withr          2.2.0    2020-04-20 [1] CRAN (R 4.0.2)
+    ##  xfun           0.17     2020-09-09 [1] CRAN (R 4.0.2)
+    ##  xml2           1.3.2    2020-04-23 [1] CRAN (R 4.0.2)
+    ##  yaml           2.2.1    2020-02-01 [1] CRAN (R 4.0.2)
     ## 
-    ## [1] /Library/Frameworks/R.framework/Versions/3.6/Resources/library
+    ## [1] /Library/Frameworks/R.framework/Versions/4.0/Resources/library
 
 The current Git commit details are:
 
@@ -710,4 +759,4 @@ if ("git2r" %in% installed.packages() & git2r::in_repository(path = ".")) git2r:
 
     ## Local:    master /Users/marce/Dropbox/Mora_CICIMA2
     ## Remote:   master @ origin (git@github.com:malfaro2/Mora_et_al2.git)
-    ## Head:     [f0af9f0] 2020-05-21: session info
+    ## Head:     [bac9b2c] 2020-09-15: Update README.md
