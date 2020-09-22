@@ -8,7 +8,7 @@ Rebeca Mora-Castro, Marcela Alfaro-Córdoba, Marcela Hernández-Jiménez, Mauric
 
 ### Contents:
 
-* [Experimental Data](data)
+* [Experimental Data](https://github.com/malfaro2/Mora_et_al2/tree/master/data)
 
 * [Code to read the experimental data](read_data.R)
 
