@@ -8,15 +8,15 @@ Rebeca Mora-Castro, Marcela Alfaro-Córdoba, Marcela Hernández-Jiménez, Mauric
 
 ### Contents:
 
-* [Data](https://github.com/malfaro2/Mora_et_al2/tree/master/data)
+* [Data](data)
 
-* [Code to read the data](https://github.com/malfaro2/Mora_et_al2/blob/master/read_data.R)
+* [Code to read the data](read_data.R)
 
-* [Code to analyze the data](https://malfaro2.github.io/Mora_et_al2/report2)
+* [Code to analyze the data](report2)
 
-* [Toxicity data](https://github.com/malfaro2/Mora_et_al2/blob/master/datos_CICA)
+* [Toxicity data](datos_CICA)
 
-* [Spectral data](https://github.com/malfaro2/Mora_et_al2/blob/master/datos_CICIMA/Readme.md)
+* [Spectral data](datos_CICIMA)
 
 ### Cite:
 
