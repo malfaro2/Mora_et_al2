@@ -8,15 +8,15 @@ Rebeca Mora-Castro, Marcela Alfaro-Córdoba, Marcela Hernández-Jiménez, Mauric
 
 ### Contents:
 
-* [Data](data)
+* [Experimental Data](data)
 
-* [Code to read the data](read_data.R)
+* [Code to read the experimental data](read_data.R)
 
-* [Code to analyze the data](report2)
+* [Code to analyze the experimental data](report2)
 
-* [Toxicity data](https://github.com/malfaro2/Mora_et_al2/tree/master/datos_CICA)
+* [Toxicity Data](https://github.com/malfaro2/Mora_et_al2/tree/master/datos_CICA)
 
-* [Spectral data](datos_CICIMA/intro)
+* [Spectral Data](datos_CICIMA/intro)
 
 ### Cite:
 
