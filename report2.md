@@ -80,6 +80,11 @@ source(file="read_data.R")
     ## * ...
 
 ``` r
+datos <- datos %>%
+  mutate(s_type=recode_factor(s_type,
+            "Field Juvenile"="Field-Juvenile",
+            "Field Adult"="Field-Adult",
+            "Captivity Adult"="Captive Adult")) 
 resumen <- datos %>% group_by(ID) %>%
   summarise(type=(unique(type)),
             typegr=(unique(typegr)),
@@ -115,10 +120,10 @@ ftable(table(resumen$w_color,resumen$typegr))
 ftable(table(resumen$w_color,resumen$s_type))
 ```
 
-    ##        Captivity Adult Field Adult Field Juvenile
-    ##                                                  
-    ## Black                8          36             25
-    ## BOB                  9          32             26
+    ##        Field-Juvenile Field-Adult Captive Adult
+    ##                                                
+    ## Black              25          36             8
+    ## BOB                26          32             9
 
 ``` r
 bp1 <- ggplot(resumen, aes(x=w_color, y=w_size)) + 
@@ -162,13 +167,13 @@ summary(lm(s_size~w_size*s_type, data=resumen))
     ## -2.6473 -1.1202 -0.3064  0.8690  6.2731 
     ## 
     ## Coefficients:
-    ##                             Estimate Std. Error t value Pr(>|t|)    
-    ## (Intercept)                   6.6621     1.1524   5.781 5.22e-08 ***
-    ## w_size                       -0.2459     0.2379  -1.033   0.3033    
-    ## s_typeField Adult            -0.2248     1.3636  -0.165   0.8693    
-    ## s_typeField Juvenile         -2.8205     1.3901  -2.029   0.0445 *  
-    ## w_size:s_typeField Adult      0.3617     0.2809   1.288   0.2002    
-    ## w_size:s_typeField Juvenile   0.4295     0.2740   1.567   0.1194    
+    ##                            Estimate Std. Error t value Pr(>|t|)    
+    ## (Intercept)                 3.84156    0.77749   4.941 2.35e-06 ***
+    ## w_size                      0.18360    0.13588   1.351   0.1790    
+    ## s_typeField-Adult           2.59571    1.06576   2.436   0.0162 *  
+    ## s_typeCaptive Adult         2.82049    1.39012   2.029   0.0445 *  
+    ## w_size:s_typeField-Adult   -0.06774    0.20192  -0.335   0.7378    
+    ## w_size:s_typeCaptive Adult -0.42949    0.27400  -1.567   0.1194    
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     ## 
@@ -205,14 +210,14 @@ datos_model <- inner_join(datos2, resumen, by="ID")
 with(datos_model, ftable(h_resp3,w_color, s_type)) 
 ```
 
-    ##                 s_type Captivity Adult Field Adult Field Juvenile
-    ## h_resp3 w_color                                                  
-    ## Attack  Black                        2           3              3
-    ##         BOB                          2           0              4
-    ## Detect  Black                        6          23             19
-    ##         BOB                          5          28             18
-    ## Avoid   Black                        0          10              3
-    ##         BOB                          2           4              4
+    ##                 s_type Field-Juvenile Field-Adult Captive Adult
+    ## h_resp3 w_color                                                
+    ## Attack  Black                       3           3             2
+    ##         BOB                         4           0             2
+    ## Detect  Black                      19          23             6
+    ##         BOB                        18          28             5
+    ## Avoid   Black                       3          10             0
+    ##         BOB                         4           4             2
 
 ``` r
 with(datos_model, ftable(h_resp3,w_color, type)) 
@@ -234,13 +239,24 @@ where the most common activity for each spider was classified as
 “detect”, “attack” or “avoid”. A summary of the data included in the
 final model is presented in Figure 4. Note that in this figure the
 number of spiders differs between groups, which is why the bar for
-lab-reared (captivity) adults is thinner than the ones for field adults
+lab-reared (captive) adults is thinner than the ones for field adults
 and field juveniles. The full model includes the following covariates:
 wasp color, spider type, wasp size, spider size, wasp genus and
 presence/absence of silk dragline. This model was compared with
 simplified versions, with the result being that the model with
 presence/absence of silk dragline and spider type was the model with the
 best fit (AIC = 212.09).
+
+``` r
+datos_model$h_resp3 <- relevel(as.factor(datos_model$h_resp3), 
+                               ref = "Attack")
+test00 <- multinom(h_resp3 ~ drag+s_type, data = datos_model)
+test01 <- multinom(h_resp3 ~ s_type, data = datos_model)
+test02 <- multinom(h_resp3 ~ s_type + w_color + type, data = datos_model)
+test03 <- multinom(h_resp3 ~ s_type*w_color*type, data = datos_model)
+test04 <- multinom(h_resp3 ~ s_type+w_color+s_size+w_size+drag+type, data = datos_model)
+test05 <- multinom(h_resp3 ~ 1, data = datos_model)
+```
 
 ``` r
 c(test00$AIC,test01$AIC,test02$AIC,
@@ -258,14 +274,14 @@ summary(test)
     ## multinom(formula = h_resp3 ~ drag + s_type, data = datos_model)
     ## 
     ## Coefficients:
-    ##        (Intercept)     drag s_typeField Adult s_typeField Juvenile
-    ## Detect   -2.636693 1.824126          2.272735             1.044499
-    ## Avoid    -3.612583 1.459788          2.637445             1.044348
+    ##        (Intercept)     drag s_typeField-Adult s_typeCaptive Adult
+    ## Detect   -1.591937 1.824009          1.228139           -1.044539
+    ## Avoid    -2.568090 1.459765          1.592933           -1.044696
     ## 
     ## Std. Errors:
-    ##        (Intercept)      drag s_typeField Adult s_typeField Juvenile
-    ## Detect    1.623456 0.7574136         0.8922031            0.7584938
-    ## Avoid     2.044980 0.9262859         1.1240895            1.0509210
+    ##        (Intercept)      drag s_typeField-Adult s_typeCaptive Adult
+    ## Detect    1.365618 0.7574176         0.7471907           0.7584901
+    ## Avoid     1.720320 0.9262931         0.8478523           1.0509646
     ## 
     ## Residual Deviance: 196.0992 
     ## AIC: 212.0992
@@ -276,17 +292,17 @@ p <- (1 - pnorm(abs(z), 0, 1)) * 2
 p
 ```
 
-    ##        (Intercept)       drag s_typeField Adult s_typeField Juvenile
-    ## Detect   0.1043495 0.01602432        0.01085508            0.1684905
-    ## Avoid    0.0773017 0.11503547        0.01896110            0.3203470
+    ##        (Intercept)       drag s_typeField-Adult s_typeCaptive Adult
+    ## Detect   0.2437251 0.01603161        0.10024325           0.1684721
+    ## Avoid    0.1354902 0.11504385        0.06027368           0.3202054
 
 ``` r
 exp(summary(test)$coefficients)
 ```
 
-    ##        (Intercept)     drag s_typeField Adult s_typeField Juvenile
-    ## Detect  0.07159762 6.197373          9.705915             2.841976
-    ## Avoid   0.02698206 4.305046         13.977451             2.841544
+    ##        (Intercept)     drag s_typeField-Adult s_typeCaptive Adult
+    ## Detect  0.20353107 6.196653          3.414869           0.3518539
+    ## Avoid   0.07668187 4.304950          4.918155           0.3517986
 
 According to the aforementioned model, being a field adult is a
 significant factor for increasing the odds of detecting versus attacking
@@ -305,15 +321,16 @@ wasps, and adults reared in captivity avoided only BOB wasps.
 
 ``` r
 datos_model <- datos_model %>%
-  mutate(h_resp3=recode_factor(h_resp3, "Detect"="Detect",
-                                "Attack"="Attack",
-                                "Avoid"="Avoid"))
+  mutate(h_resp3=recode_factor(h_resp3, "Detect"="Detect","Attack"="Attack","Avoid"="Avoid"))
 ggplot(data = datos_model) +
   geom_mosaic(aes(x = product(h_resp3, s_type), 
-                  fill=w_color), 
-              na.rm=TRUE, divider=mosaic("v")) +  
+              fill=w_color), 
+              show.legend=TRUE,
+              na.rm=TRUE, 
+              divider=mosaic("v")) +  
   theme(legend.position = "none") +
-  scale_fill_manual(values=c("#999999", "#E69F00")) +labs(x = "Action", title='', y="")
+  scale_fill_manual(values=c("#999999", "#E69F00")) +
+  labs(x = "Action", title='', y="")
 ```
 
 ![](report2_files/figure-markdown_github/unnamed-chunk-7-1.png)
@@ -328,11 +345,7 @@ datos <- datos %>% mutate(time3= recode_factor(time2,
           "10-20 min" = "10-20 min",
           "20-30 min" = "20-30 min",
           "30-40 min" = "30-40 min"))
-dat<-datos[datos$h_resp3=="Detect",] %>%
-  mutate(s_type=recode_factor(s_type,
-                              "Wild Juvenile"="Field-Juvenile",
-                              "Wild Adult"="Field-Adult",
-                              "Adult Captivity"="Captivity-Adult")) 
+dat<-datos[datos$h_resp3=="Detect",] 
 
 ta1<- ggplot(data = dat) +
   geom_mosaic(data=dat,aes(x = product(w_color, time3), 
@@ -344,11 +357,7 @@ ta1<- ggplot(data = dat) +
   theme(legend.position = "none") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
-dat<-datos[datos$h_resp3=="Attack",] %>%
-  mutate(s_type=recode_factor(s_type,
-                              "Wild Juvenile"="Field-Juvenile",
-                              "Wild Adult"="Field-Adult",
-                              "Adult Captivity"="Captivity-Adult")) 
+dat<-datos[datos$h_resp3=="Attack",] 
 
 ta2<- ggplot(data = dat) +
   geom_mosaic(data=dat,aes(x = product(w_color, time3), 
@@ -360,11 +369,7 @@ ta2<- ggplot(data = dat) +
   theme(legend.position = "none") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
-dat<-datos[datos$h_resp3=="Avoid",] %>%
-  mutate(s_type=recode_factor(s_type,
-                              "Wild Juvenile"="Field-Juvenile",
-                              "Wild Adult"="Field-Adult",
-                              "Adult Captivity"="Captivity-Adult")) 
+dat<-datos[datos$h_resp3=="Avoid",] 
 
 ta3<- ggplot(data = dat) +
   geom_mosaic(data=dat,aes(x = product(w_color, time3), 
@@ -385,11 +390,7 @@ grid.arrange(ta1, ta2, ta3, nrow = 3)
 
 ``` r
 options <- sort(unique(datos$h_resp3))
-dat<-datos[datos$h_resp3=="Detect",] %>%
-  mutate(s_type=recode_factor(s_type,
-                              "Wild Juvenile"="Field-Juvenile",
-                              "Wild Adult"="Field-Adult",
-                              "Adult Captivity"="Captivity-Adult")) %>% 
+dat<-datos[datos$h_resp3=="Detect",] %>% 
   group_by(s_type, w_color, time3) %>% summarise(n=n())
 ```
 
@@ -404,11 +405,7 @@ t1<-   ggplot(data=dat, aes(x=time3, y=n, fill=w_color)) +
   #theme(legend.position = "none") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
-dat<-datos[datos$h_resp3=="Attack",] %>%
-  mutate(s_type=recode_factor(s_type,
-                              "Wild Juvenile"="Field-Juvenile",
-                              "Wild Adult"="Field-Adult",
-                              "Adult Captivity"="Captivity-Adult")) %>% 
+dat<-datos[datos$h_resp3=="Attack",]  %>% 
   group_by(s_type, w_color, time3) %>% summarise(n=n())
 ```
 
@@ -423,11 +420,7 @@ t2<-  ggplot(data=dat, aes(x=time3, y=n, fill=w_color)) +
   #theme(legend.position = "none") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
   
-dat<-datos[datos$h_resp3=="Avoid",] %>%
-  mutate(s_type=recode_factor(s_type,
-                              "Wild Juvenile"="Field-Juvenile",
-                              "Wild Adult"="Field-Adult",
-                              "Adult Captivity"="Captivity-Adult")) %>% 
+dat<-datos[datos$h_resp3=="Avoid",]  %>% 
   group_by(s_type, w_color, time3) %>% summarise(n=n())
 ```
 
@@ -493,17 +486,17 @@ ftable(table(datos_model$h_resp3,
              datos_model$w_color))
 ```
 
-    ##                         Black BOB
-    ##                                  
-    ## Detect Captivity Adult      6   5
-    ##        Field Adult         23  28
-    ##        Field Juvenile      19  18
-    ## Attack Captivity Adult      2   2
-    ##        Field Adult          3   0
-    ##        Field Juvenile       3   4
-    ## Avoid  Captivity Adult      0   2
-    ##        Field Adult         10   4
-    ##        Field Juvenile       3   4
+    ##                        Black BOB
+    ##                                 
+    ## Detect Field-Juvenile     19  18
+    ##        Field-Adult        23  28
+    ##        Captive Adult       6   5
+    ## Attack Field-Juvenile      3   4
+    ##        Field-Adult         3   0
+    ##        Captive Adult       2   2
+    ## Avoid  Field-Juvenile      3   4
+    ##        Field-Adult        10   4
+    ##        Captive Adult       0   2
 
 ``` r
 datos_model <- datos_model %>%
@@ -624,7 +617,7 @@ done using the nnet package (Venables et al, 2002).
 Colophon
 ========
 
-This report was generated on 2020-09-19 14:58:11 using the following
+This report was generated on 2020-09-22 16:48:02 using the following
 computational environment and dependencies:
 
 ``` r
@@ -642,7 +635,7 @@ if ("devtools" %in% installed.packages()) devtools::session_info()
     ##  collate  en_US.UTF-8                 
     ##  ctype    en_US.UTF-8                 
     ##  tz       America/Costa_Rica          
-    ##  date     2020-09-19                  
+    ##  date     2020-09-22                  
     ## 
     ## ─ Packages ───────────────────────────────────────────────────────────────────
     ##  package      * version  date       lib source        
@@ -657,6 +650,7 @@ if ("devtools" %in% installed.packages()) devtools::session_info()
     ##  cli            2.0.2    2020-02-28 [1] CRAN (R 4.0.2)
     ##  colorspace     1.4-1    2019-03-18 [1] CRAN (R 4.0.2)
     ##  crayon         1.3.4    2017-09-16 [1] CRAN (R 4.0.2)
+    ##  curl           4.3      2019-12-02 [1] CRAN (R 4.0.1)
     ##  data.table     1.13.0   2020-07-24 [1] CRAN (R 4.0.2)
     ##  DBI            1.1.0    2019-12-15 [1] CRAN (R 4.0.2)
     ##  dbplyr         1.4.4    2020-05-27 [1] CRAN (R 4.0.2)
@@ -759,4 +753,4 @@ if ("git2r" %in% installed.packages() & git2r::in_repository(path = ".")) git2r:
 
     ## Local:    master /Users/marce/Dropbox/Mora_CICIMA2
     ## Remote:   master @ origin (git@github.com:malfaro2/Mora_et_al2.git)
-    ## Head:     [bac9b2c] 2020-09-15: Update README.md
+    ## Head:     [43c4dd5] 2020-09-19: links
