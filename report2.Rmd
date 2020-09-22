@@ -13,7 +13,6 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 library(ggplot2)   
 library(tidyverse)
-library(ggmosaic)
 require(foreign)
 require(nnet)
 require(ggplot2)
@@ -21,7 +20,8 @@ require(reshape2)
 library(gridExtra)
 library(extrafont)
 library(grDevices)
-devtools::install_github('rmcd1024/ggmosaic', ref="ggplot_3.3.0-scales/fix")
+devtools::install_github('haleyjeppson/ggmosaic')
+library(ggmosaic)
 theme_set(theme_bw(base_size=12, base_family='Arial'))
 ```
 
@@ -55,8 +55,7 @@ resumen <- datos %>% group_by(ID) %>%
             w_size=(unique(w_size)),
             s_type=(unique(s_type)),
             s_size=(unique(s_size)), 
-            drag=(unique(drag))) %>% 
-  arrange(type, w_color, s_type)
+            drag=(unique(drag))) %>% arrange(type, w_color, s_type)
 
 ftable(table(resumen$w_color,resumen$type))
 ftable(table(resumen$w_color,resumen$typegr))
