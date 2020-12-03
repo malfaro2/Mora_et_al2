@@ -149,6 +149,29 @@ ggplot(data = datos_model) +
   labs(x = "Action", title='', y="")
 ```
 
+```{r}
+# ggplot(data = datos_model) +
+#   geom_mosaic(aes(x = product(h_resp3, s_type), 
+#               fill=w_color), 
+#               show.legend=TRUE,
+#               na.rm=TRUE, 
+#               divider=mosaic("v")) +  
+#   theme(legend.position = "none") +
+#   scale_fill_manual(values=c("#999999", "#E69F00")) +
+#   labs(x = "Action", title='', y="")
+
+ggplot(data=datos_model, aes(x=h_resp3, y=..count.., fill=w_color)) + 
+  geom_bar(position="dodge") +
+  facet_wrap(~s_type, ncol=5)+
+  scale_fill_manual(name = "Wasp Color", values=c("#999999", "#E69F00")) +
+  labs(x = "Most Common Action per Trial n = 136", title='', y="Count")+
+  #theme(legend.position = "none") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+with(datos_model, ftable(h_resp3,w_color, s_type)) 
+
+```
+
+
 
 ### Timelines (original version)
 
@@ -207,10 +230,10 @@ dat<-datos[datos$h_resp3=="Detect",] %>%
   group_by(s_type, w_color, time3) %>% summarise(n=n())
 
 t1<-   ggplot(data=dat, aes(x=time3, y=n, fill=w_color)) +
-  geom_bar(stat="identity") + 
+  geom_bar(stat="identity", position="dodge") + ylim(c(0,80))+
   facet_wrap(~s_type, ncol=5)+
   scale_fill_manual(name = "Wasp Color", values=c("#999999", "#E69F00")) +
-  labs(x = "Time", title='A', y="")+
+  labs(x = "Time", title='A: Detect ', y="Count of individual actions")+
   #theme(legend.position = "none") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
@@ -218,10 +241,10 @@ dat<-datos[datos$h_resp3=="Attack",]  %>%
   group_by(s_type, w_color, time3) %>% summarise(n=n())
 
 t2<-  ggplot(data=dat, aes(x=time3, y=n, fill=w_color)) +
-  geom_bar(stat="identity") + 
+  geom_bar(stat="identity", position="dodge") + ylim(c(0,80))+
   facet_wrap(~s_type, ncol=5)+
   scale_fill_manual(name = "Wasp Color", values=c("#999999", "#E69F00")) +
-  labs(x = "Time", title='B', y="")+
+  labs(x = "Time", title='B: Attack', y="Count of individual actions")+
   #theme(legend.position = "none") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
   
@@ -229,10 +252,10 @@ dat<-datos[datos$h_resp3=="Avoid",]  %>%
   group_by(s_type, w_color, time3) %>% summarise(n=n())
 
 t3<-   ggplot(data=dat, aes(x=time3, y=n, fill=w_color)) +
-  geom_bar(stat="identity") + 
+  geom_bar(stat="identity", position="dodge") + ylim(c(0,80))+
   facet_wrap(~s_type, ncol=5)+
   scale_fill_manual(name = "Wasp Color",values=c("#999999", "#E69F00")) +
-  labs(x = "Time", title='C', y="")+
+  labs(x = "Time", title='C: Avoid', y="Count of individual actions")+
  # theme(legend.position = "none") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
   

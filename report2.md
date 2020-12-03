@@ -334,6 +334,41 @@ ggplot(data = datos_model) +
 
 ![](report2_files/figure-markdown_github/unnamed-chunk-7-1.png)
 
+``` r
+# ggplot(data = datos_model) +
+#   geom_mosaic(aes(x = product(h_resp3, s_type), 
+#               fill=w_color), 
+#               show.legend=TRUE,
+#               na.rm=TRUE, 
+#               divider=mosaic("v")) +  
+#   theme(legend.position = "none") +
+#   scale_fill_manual(values=c("#999999", "#E69F00")) +
+#   labs(x = "Action", title='', y="")
+
+ggplot(data=datos_model, aes(x=h_resp3, y=..count.., fill=w_color)) + 
+  geom_bar(position="dodge") +
+  facet_wrap(~s_type, ncol=5)+
+  scale_fill_manual(name = "Wasp Color", values=c("#999999", "#E69F00")) +
+  labs(x = "Most Common Action per Trial n = 136", title='', y="Count")+
+  #theme(legend.position = "none") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+![](report2_files/figure-markdown_github/unnamed-chunk-8-1.png)
+
+``` r
+with(datos_model, ftable(h_resp3,w_color, s_type)) 
+```
+
+    ##                 s_type Field-Juvenile Field-Adult Captive Adult
+    ## h_resp3 w_color                                                
+    ## Detect  Black                      19          23             6
+    ##         BOB                        18          28             5
+    ## Attack  Black                       3           3             2
+    ##         BOB                         4           0             2
+    ## Avoid   Black                       3          10             0
+    ##         BOB                         4           4             2
+
 ### Timelines (original version)
 
 ``` r
@@ -383,7 +418,7 @@ ta3<- ggplot(data = dat) +
 grid.arrange(ta1, ta2, ta3, nrow = 3)
 ```
 
-![](report2_files/figure-markdown_github/unnamed-chunk-8-1.png)
+![](report2_files/figure-markdown_github/unnamed-chunk-9-1.png)
 
 ### Timelines (bar plots option)
 
@@ -397,10 +432,10 @@ dat<-datos[datos$h_resp3=="Detect",] %>%
 
 ``` r
 t1<-   ggplot(data=dat, aes(x=time3, y=n, fill=w_color)) +
-  geom_bar(stat="identity") + 
+  geom_bar(stat="identity", position="dodge") + ylim(c(0,80))+
   facet_wrap(~s_type, ncol=5)+
   scale_fill_manual(name = "Wasp Color", values=c("#999999", "#E69F00")) +
-  labs(x = "Time", title='A', y="")+
+  labs(x = "Time", title='A: Detect ', y="Count of individual actions")+
   #theme(legend.position = "none") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
@@ -412,10 +447,10 @@ dat<-datos[datos$h_resp3=="Attack",]  %>%
 
 ``` r
 t2<-  ggplot(data=dat, aes(x=time3, y=n, fill=w_color)) +
-  geom_bar(stat="identity") + 
+  geom_bar(stat="identity", position="dodge") + ylim(c(0,80))+
   facet_wrap(~s_type, ncol=5)+
   scale_fill_manual(name = "Wasp Color", values=c("#999999", "#E69F00")) +
-  labs(x = "Time", title='B', y="")+
+  labs(x = "Time", title='B: Attack', y="Count of individual actions")+
   #theme(legend.position = "none") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
   
@@ -427,17 +462,17 @@ dat<-datos[datos$h_resp3=="Avoid",]  %>%
 
 ``` r
 t3<-   ggplot(data=dat, aes(x=time3, y=n, fill=w_color)) +
-  geom_bar(stat="identity") + 
+  geom_bar(stat="identity", position="dodge") + ylim(c(0,80))+
   facet_wrap(~s_type, ncol=5)+
   scale_fill_manual(name = "Wasp Color",values=c("#999999", "#E69F00")) +
-  labs(x = "Time", title='C', y="")+
+  labs(x = "Time", title='C: Avoid', y="Count of individual actions")+
  # theme(legend.position = "none") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
   
 grid.arrange(t1, t2, t3, nrow = 3)
 ```
 
-![](report2_files/figure-markdown_github/unnamed-chunk-9-1.png)
+![](report2_files/figure-markdown_github/unnamed-chunk-10-1.png)
 
 ### Re-coding of BOB for Table 1
 
@@ -616,7 +651,7 @@ done using the nnet package (Venables et al, 2002).
 Colophon
 ========
 
-This report was generated on 2020-09-22 17:05:12 using the following
+This report was generated on 2020-12-02 20:47:35 using the following
 computational environment and dependencies:
 
 ``` r
@@ -627,14 +662,14 @@ if ("devtools" %in% installed.packages()) devtools::session_info()
     ## ─ Session info ───────────────────────────────────────────────────────────────
     ##  setting  value                       
     ##  version  R version 4.0.2 (2020-06-22)
-    ##  os       macOS Catalina 10.15.6      
+    ##  os       macOS Catalina 10.15.7      
     ##  system   x86_64, darwin17.0          
     ##  ui       X11                         
     ##  language (EN)                        
     ##  collate  en_US.UTF-8                 
     ##  ctype    en_US.UTF-8                 
     ##  tz       America/Costa_Rica          
-    ##  date     2020-09-22                  
+    ##  date     2020-12-02                  
     ## 
     ## ─ Packages ───────────────────────────────────────────────────────────────────
     ##  package      * version  date       lib source                                
@@ -643,20 +678,20 @@ if ("devtools" %in% installed.packages()) devtools::session_info()
     ##  blob           1.2.1    2020-01-20 [1] CRAN (R 4.0.2)                        
     ##  boot           1.3-25   2020-04-26 [1] CRAN (R 4.0.2)                        
     ##  broom          0.7.0    2020-07-09 [1] CRAN (R 4.0.2)                        
-    ##  callr          3.4.4    2020-09-07 [1] CRAN (R 4.0.2)                        
+    ##  callr          3.5.1    2020-10-13 [1] CRAN (R 4.0.2)                        
     ##  cellranger     1.1.0    2016-07-27 [1] CRAN (R 4.0.2)                        
     ##  class          7.3-17   2020-04-26 [1] CRAN (R 4.0.2)                        
-    ##  cli            2.0.2    2020-02-28 [1] CRAN (R 4.0.2)                        
-    ##  colorspace     1.4-1    2019-03-18 [1] CRAN (R 4.0.2)                        
+    ##  cli            2.2.0    2020-11-20 [1] CRAN (R 4.0.2)                        
+    ##  colorspace     2.0-0    2020-11-11 [1] CRAN (R 4.0.2)                        
     ##  crayon         1.3.4    2017-09-16 [1] CRAN (R 4.0.2)                        
     ##  curl           4.3      2019-12-02 [1] CRAN (R 4.0.1)                        
-    ##  data.table     1.13.0   2020-07-24 [1] CRAN (R 4.0.2)                        
+    ##  data.table     1.13.2   2020-10-19 [1] CRAN (R 4.0.2)                        
     ##  DBI            1.1.0    2019-12-15 [1] CRAN (R 4.0.2)                        
     ##  dbplyr         1.4.4    2020-05-27 [1] CRAN (R 4.0.2)                        
     ##  desc           1.2.0    2018-05-01 [1] CRAN (R 4.0.2)                        
     ##  DescTools    * 0.99.38  2020-09-07 [1] CRAN (R 4.0.2)                        
     ##  devtools       2.3.2    2020-09-18 [1] CRAN (R 4.0.2)                        
-    ##  digest         0.6.25   2020-02-23 [1] CRAN (R 4.0.2)                        
+    ##  digest         0.6.27   2020-10-24 [1] CRAN (R 4.0.2)                        
     ##  dplyr        * 1.0.2    2020-08-18 [1] CRAN (R 4.0.2)                        
     ##  e1071          1.7-3    2019-11-26 [1] CRAN (R 4.0.2)                        
     ##  ellipsis       0.3.1    2020-05-15 [1] CRAN (R 4.0.2)                        
@@ -670,8 +705,8 @@ if ("devtools" %in% installed.packages()) devtools::session_info()
     ##  forcats      * 0.5.0    2020-03-01 [1] CRAN (R 4.0.2)                        
     ##  foreign      * 0.8-80   2020-05-24 [1] CRAN (R 4.0.2)                        
     ##  fs             1.5.0    2020-07-31 [1] CRAN (R 4.0.2)                        
-    ##  generics       0.0.2    2018-11-29 [1] CRAN (R 4.0.2)                        
-    ##  ggmosaic     * 0.3.0    2020-09-22 [1] Github (haleyjeppson/ggmosaic@ddf4461)
+    ##  generics       0.1.0    2020-10-31 [1] CRAN (R 4.0.2)                        
+    ##  ggmosaic     * 0.3.1    2020-11-30 [1] Github (haleyjeppson/ggmosaic@c095f3a)
     ##  ggplot2      * 3.3.2    2020-06-19 [1] CRAN (R 4.0.2)                        
     ##  gld            2.6.2    2020-01-08 [1] CRAN (R 4.0.2)                        
     ##  glue           1.4.2    2020-08-27 [1] CRAN (R 4.0.2)                        
@@ -680,17 +715,17 @@ if ("devtools" %in% installed.packages()) devtools::session_info()
     ##  haven          2.3.1    2020-06-01 [1] CRAN (R 4.0.2)                        
     ##  hms            0.5.3    2020-01-08 [1] CRAN (R 4.0.2)                        
     ##  htmltools      0.5.0    2020-06-16 [1] CRAN (R 4.0.2)                        
-    ##  htmlwidgets    1.5.1    2019-10-08 [1] CRAN (R 4.0.2)                        
+    ##  htmlwidgets    1.5.2    2020-10-03 [1] CRAN (R 4.0.2)                        
     ##  httr           1.4.2    2020-07-20 [1] CRAN (R 4.0.2)                        
     ##  jsonlite       1.7.1    2020-09-07 [1] CRAN (R 4.0.2)                        
     ##  knitr          1.29     2020-06-23 [1] CRAN (R 4.0.2)                        
-    ##  labeling       0.3      2014-08-23 [1] CRAN (R 4.0.2)                        
+    ##  labeling       0.4.2    2020-10-20 [1] CRAN (R 4.0.2)                        
     ##  lattice        0.20-41  2020-04-02 [1] CRAN (R 4.0.2)                        
     ##  lazyeval       0.2.2    2019-03-15 [1] CRAN (R 4.0.2)                        
     ##  lifecycle      0.2.0    2020-03-06 [1] CRAN (R 4.0.2)                        
     ##  lmom           2.8      2019-03-12 [1] CRAN (R 4.0.2)                        
     ##  lubridate      1.7.9    2020-06-08 [1] CRAN (R 4.0.2)                        
-    ##  magrittr       1.5      2014-11-22 [1] CRAN (R 4.0.2)                        
+    ##  magrittr       2.0.1    2020-11-17 [1] CRAN (R 4.0.2)                        
     ##  MASS           7.3-51.6 2020-04-26 [1] CRAN (R 4.0.2)                        
     ##  Matrix         1.2-18   2019-11-27 [1] CRAN (R 4.0.2)                        
     ##  memoise        1.1.0    2017-04-21 [1] CRAN (R 4.0.2)                        
@@ -700,41 +735,41 @@ if ("devtools" %in% installed.packages()) devtools::session_info()
     ##  mvtnorm        1.1-1    2020-06-09 [1] CRAN (R 4.0.2)                        
     ##  nlme           3.1-148  2020-05-24 [1] CRAN (R 4.0.2)                        
     ##  nnet         * 7.3-14   2020-04-26 [1] CRAN (R 4.0.2)                        
-    ##  pillar         1.4.6    2020-07-10 [1] CRAN (R 4.0.2)                        
+    ##  pillar         1.4.7    2020-11-20 [1] CRAN (R 4.0.2)                        
     ##  pkgbuild       1.1.0    2020-07-13 [1] CRAN (R 4.0.2)                        
     ##  pkgconfig      2.0.3    2019-09-22 [1] CRAN (R 4.0.2)                        
     ##  pkgload        1.1.0    2020-05-29 [1] CRAN (R 4.0.2)                        
     ##  plotly         4.9.2.1  2020-04-04 [1] CRAN (R 4.0.2)                        
     ##  plyr           1.8.6    2020-03-03 [1] CRAN (R 4.0.2)                        
     ##  prettyunits    1.1.1    2020-01-24 [1] CRAN (R 4.0.2)                        
-    ##  processx       3.4.4    2020-09-03 [1] CRAN (R 4.0.2)                        
+    ##  processx       3.4.5    2020-11-30 [1] CRAN (R 4.0.2)                        
     ##  productplots   0.1.1    2016-07-02 [1] CRAN (R 4.0.2)                        
-    ##  ps             1.3.4    2020-08-11 [1] CRAN (R 4.0.2)                        
+    ##  ps             1.4.0    2020-10-07 [1] CRAN (R 4.0.2)                        
     ##  purrr        * 0.3.4    2020-04-17 [1] CRAN (R 4.0.2)                        
-    ##  R6             2.4.1    2019-11-12 [1] CRAN (R 4.0.2)                        
+    ##  R6             2.5.0    2020-10-28 [1] CRAN (R 4.0.2)                        
     ##  Rcpp           1.0.5    2020-07-06 [1] CRAN (R 4.0.2)                        
     ##  readr        * 1.3.1    2018-12-21 [1] CRAN (R 4.0.2)                        
     ##  readxl       * 1.3.1    2019-03-13 [1] CRAN (R 4.0.2)                        
     ##  remotes        2.2.0    2020-07-21 [1] CRAN (R 4.0.2)                        
     ##  reprex         0.3.0    2019-05-16 [1] CRAN (R 4.0.2)                        
     ##  reshape2     * 1.4.4    2020-04-09 [1] CRAN (R 4.0.2)                        
-    ##  rlang          0.4.7    2020-07-09 [1] CRAN (R 4.0.2)                        
+    ##  rlang          0.4.9    2020-11-26 [1] CRAN (R 4.0.2)                        
     ##  rmarkdown      2.3      2020-06-18 [1] CRAN (R 4.0.2)                        
-    ##  rprojroot      1.3-2    2018-01-03 [1] CRAN (R 4.0.2)                        
-    ##  rstudioapi     0.11     2020-02-07 [1] CRAN (R 4.0.2)                        
+    ##  rprojroot      2.0.2    2020-11-15 [1] CRAN (R 4.0.2)                        
+    ##  rstudioapi     0.13     2020-11-12 [1] CRAN (R 4.0.2)                        
     ##  Rttf2pt1       1.3.8    2020-01-10 [1] CRAN (R 4.0.2)                        
     ##  rvest          0.3.6    2020-07-25 [1] CRAN (R 4.0.2)                        
     ##  scales         1.1.1    2020-05-11 [1] CRAN (R 4.0.2)                        
     ##  sessioninfo    1.1.1    2018-11-05 [1] CRAN (R 4.0.2)                        
     ##  stringi        1.5.3    2020-09-09 [1] CRAN (R 4.0.2)                        
     ##  stringr      * 1.4.0    2019-02-10 [1] CRAN (R 4.0.2)                        
-    ##  testthat       2.3.2    2020-03-02 [1] CRAN (R 4.0.2)                        
-    ##  tibble       * 3.0.3    2020-07-10 [1] CRAN (R 4.0.2)                        
+    ##  testthat       3.0.0    2020-10-31 [1] CRAN (R 4.0.2)                        
+    ##  tibble       * 3.0.4    2020-10-12 [1] CRAN (R 4.0.2)                        
     ##  tidyr        * 1.1.2    2020-08-27 [1] CRAN (R 4.0.2)                        
     ##  tidyselect     1.1.0    2020-05-11 [1] CRAN (R 4.0.2)                        
     ##  tidyverse    * 1.3.0    2019-11-21 [1] CRAN (R 4.0.2)                        
     ##  usethis        1.6.3    2020-09-17 [1] CRAN (R 4.0.2)                        
-    ##  vctrs          0.3.4    2020-08-29 [1] CRAN (R 4.0.2)                        
+    ##  vctrs          0.3.5    2020-11-17 [1] CRAN (R 4.0.2)                        
     ##  viridisLite    0.3.0    2018-02-01 [1] CRAN (R 4.0.1)                        
     ##  withr          2.3.0    2020-09-22 [1] CRAN (R 4.0.2)                        
     ##  xfun           0.17     2020-09-09 [1] CRAN (R 4.0.2)                        
@@ -752,4 +787,4 @@ if ("git2r" %in% installed.packages() & git2r::in_repository(path = ".")) git2r:
 
     ## Local:    master /Users/marce/Dropbox/Mora_CICIMA2
     ## Remote:   master @ origin (git@github.com:malfaro2/Mora_et_al2.git)
-    ## Head:     [e44b43c] 2020-09-22: update plots
+    ## Head:     [581de12] 2020-09-22: update plots mosaic
